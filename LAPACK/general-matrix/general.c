@@ -2,18 +2,24 @@
 #include <stdlib.h>
 #include <string.h>
 
-int check_args(int argc, const char *file_name, const char *MATRIX_TYPE, const char *OPS, const int RANDOM_SEED){
-    if(argc != 6) {
-        printf("Use: %s <number_rows> <number_columns> <matrix_type> <ops> <seed>\n", file_name);
-        return -1;
+int check_args(int argc, int rows, int columns, const char *MATRIX_TYPE, const char *OPS, const int RANDOM_SEED){
+    if(!strcmp(MATRIX_TYPE, "s")){
+        if(rows != columns){
+            printf("To one symmetric matrix the number of rows and columns must be equal\n");
+            return -2;
+        }
     }
     if(strpbrk(MATRIX_TYPE, "gs") == NULL){
         printf("Options to <matrix_type>: 'g', 's', 'gs'\n");
-        return -2;
+        return -3;
     }
     if(strpbrk(OPS, "fis") == NULL){
-        printf("Options to <op>: 'f', 'i', 's'\n");
-        return -3;
+        printf("Options to <op>: 'f', 'fi', 'fs'\n");
+        return -4;
+    }
+    if(strcmp(OPS, "f") && strcmp(OPS, "fi") && strcmp(OPS, "fs")){
+        printf("Options to <op>: 'f', 'fi', 'fs'\n");
+        return -4;
     }
 
     return 0;
@@ -130,6 +136,19 @@ int packed_symmetric_fill(float **matrix, int size, int seed){
 
     for(int i = 0; i < size; i++){
         (*matrix)[i] = rand();
+    }
+
+    return 0;
+}
+
+int copy_matrix(float **dest, float **source, int size){
+    if(dest == NULL || source == NULL){
+        printf("One or more matrices empty\n");
+        return -1;
+    }
+
+    for(int i = 0; i < size; i++){
+        (*dest)[i] = (*source)[i];
     }
 
     return 0;
