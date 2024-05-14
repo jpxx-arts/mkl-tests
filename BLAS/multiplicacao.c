@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <mkl.h>
+
+#define RANDOM_SEED 1
+
+int create_matrix(float **matrix, int rows, int columns);
+int auto_fill(float **matrix, int rows, int columns, int seed);
+int show_matrix(float *matrix, int rows, int columns);
+
+int main(int argc, char const *argv[]){
+    if(argc != 5) {
+        printf("Use: %s <A_rows> <A_columns> <B_rows> <B_columns>\n", argv[0]);
+        return -1;
+    }
+
+    clock_t begin = clock();
+    lapack_int A_rows = atoi(argv[1]), A_columns = atoi(argv[2]), B_rows = atoi(argv[3]), B_columns = atoi(argv[4]);
+
+    float *A = (float *) malloc(A_rows*A_columns*sizeof(float));
+    auto_fill(&A, A_rows, A_columns, RANDOM_SEED);
+    printf("Matrix A:\n");
+    show_matrix(A, A_rows, A_columns);
+
+    float *B = (float *) malloc(B_rows*B_columns*sizeof(float));
+    auto_fill(&B, B_rows, B_columns, RANDOM_SEED + 1);
+    printf("Matrix B:\n");
+    show_matrix(B, B_rows, B_columns);
+
+    float *C = (float *) malloc(A_rows*B_columns*sizeof(float));
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, A_rows, B_columns, A_columns, 1.0, A, A_columns, B, B_rows, 0.0, C, B_columns);
+    printf("Matrix C:\n");
+    show_matrix(C, A_rows, B_columns);
+
+    free(C);
+    free(B);
+    free(A);
+
+    clock_t end = clock();
+    double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+    printf("%f s\n", time_spent);
+
+    return 0;
+}
+
+int create_matrix(float **matrix, int rows, int columns){
+    (*matrix) = (float *) malloc(rows*columns * sizeof(int));
+    if ((*matrix) == NULL) {
+        printf("Allocation error");
+        free(*matrix);
+        return -1;
+    }
+
+    return 0;
+}
+
+int auto_fill(float **matrix, int rows, int columns, int seed){
+    if(matrix == NULL){
+        printf("Empty matrix");
+        return -1;
+    }
+
+    srand(seed);
+
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < columns; j++) {
+            (*matrix)[j + (i*columns)] = rand()%10;
+        }
+    }
+
+    return 0;
+}
+
+int show_matrix(float *matrix, int rows, int columns){
+    if(matrix == NULL){
+        printf("Empty matrix");
+        return -1;
+    }
+
+    for(int i = 0; i < rows; i++){
+        for(int j = 0; j < columns; j++){
+            printf("%.2f ", matrix[j + (i*columns)]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+
+    return 0;
+}
