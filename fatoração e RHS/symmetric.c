@@ -14,37 +14,43 @@ int main(int argc, char const *argv[]){
     double start_time, end_time;
     start_time = dsecnd();
 
-    if(argc != 3) {
-        printf("Use: %s <number_rows> <number_columns>\n", argv[0]);
+    if(argc != 2) {
+        printf("Use: %s <dimension>\n", argv[0]);
         return -1;
     }
 
-    lapack_int n_rows = atoi(argv[1]), n_columns = atoi(argv[2]);
+    lapack_int n = atoi(argv[1]);
 
     // Fatoração de uma matriz A
-    float *A = (float *) malloc(n_rows*n_columns*sizeof(float));
-    symmetric_fill(&A, n_rows, n_columns, RANDOM_SEED);
+    float *A = (float *) malloc(n*n*sizeof(float));
+    symmetric_fill(&A, n, n, RANDOM_SEED);
     printf("Matrix A:\n");
-    show_matrix(A, n_rows, n_columns);
+    show_matrix(A, n, n);
 
-    lapack_int *ipiv = (lapack_int *) malloc(n_columns*sizeof(lapack_int));
-    lapack_int info_LU = LAPACKE_sgetrf(LAPACK_ROW_MAJOR, n_rows, n_columns, A, n_columns, ipiv);
+    float *AP = (float *) malloc(n*(n+1)/2*sizeof(float));
+    pack_matrix(&A, &AP, n, n, n);
+    // printf("Matrix AP:\n");
+    // for(int i = 0; i < n*(n+1)/2; i++){
+    //     printf("%f ", AP[i]);
+    // }
+
+    lapack_int info_LU = LAPACKE_spotrf(LAPACK_ROW_MAJOR, 'U', n, AP, n);
 
     printf("LU info: %d\n", info_LU);
-    printf("Matrix A factorized:\n");
-    show_matrix(A, n_rows, n_columns);
+    printf("Matrix AP factorized:\n");
+    show_matrix(AP, n, n);
 
     // // RHS
-    // float *b = (float *) malloc(n_rows*sizeof(float));
-    // auto_fill(&b, n_rows, 1, RANDOM_SEED);
+    // float *b = (float *) malloc(n*sizeof(float));
+    // auto_fill(&b, n, 1, RANDOM_SEED);
     // printf("Matrix b:\n");
-    // show_matrix(b, n_rows, 1);
+    // show_matrix(b, n, 1);
 
     // // Ax = b
-    // lapack_int info_solved_system = LAPACKE_sgetrs(LAPACK_ROW_MAJOR, 'N', n_rows, 1, A, n_columns, ipiv, b , 1);
+    // lapack_int info_solved_system = LAPACKE_sgetrs(LAPACK_ROW_MAJOR, 'N', n, 1, A, n, ipiv, b , 1);
     // printf("solved system info: %d\n", info_solved_system);
     // printf("Matrix x:\n");
-    // show_matrix(b, n_rows, 1);
+    // show_matrix(b, n, 1);
 
     // free(b);
     // free(ipiv);
