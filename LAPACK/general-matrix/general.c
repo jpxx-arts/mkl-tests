@@ -13,11 +13,7 @@ int check_args(int argc, int rows, int columns, const char *MATRIX_TYPE, const c
         printf("Options to <matrix_type>: 'g', 's', 'gs'\n");
         return -3;
     }
-    if(strpbrk(OPS, "fis") == NULL){
-        printf("Options to <op>: 'f', 'fi', 'fs'\n");
-        return -4;
-    }
-    if(strcmp(OPS, "f") && strcmp(OPS, "fi") && strcmp(OPS, "fs")){
+    if(strpbrk(OPS, "f") == NULL || strpbrk(OPS, "fis") == NULL){
         printf("Options to <op>: 'f', 'fi', 'fs'\n");
         return -4;
     }
@@ -82,7 +78,7 @@ int symmetric_fill(float **matrix, int rows, int columns, int seed){
     for(int i = 0; i < rows; i++){
         for(int j = 0; j < columns; j++){    
             if(j >= i){
-                (*matrix)[i*rows + j] = rand();
+                (*matrix)[i*rows + j] = rand()%10;
             }else{
                 (*matrix)[i*rows + j] = (*matrix)[j*rows + i];
             }
@@ -135,7 +131,7 @@ int packed_symmetric_fill(float **matrix, int size, int seed){
     srand(seed);
 
     for(int i = 0; i < size; i++){
-        (*matrix)[i] = rand();
+        (*matrix)[i] = rand()%10;
     }
 
     return 0;
