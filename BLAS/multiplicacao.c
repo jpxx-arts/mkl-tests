@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include <mkl.h>
 
 #define RANDOM_SEED 1
@@ -10,12 +9,14 @@ int auto_fill(float **matrix, int rows, int columns, int seed);
 int show_matrix(float *matrix, int rows, int columns);
 
 int main(int argc, char const *argv[]){
+    double start_time, end_time;
+    start_time = dsecnd();
+
     if(argc != 5) {
         printf("Use: %s <A_rows> <A_columns> <B_rows> <B_columns>\n", argv[0]);
         return -1;
     }
 
-    clock_t begin = clock();
     lapack_int A_rows = atoi(argv[1]), A_columns = atoi(argv[2]), B_rows = atoi(argv[3]), B_columns = atoi(argv[4]);
 
     float *A = (float *) malloc(A_rows*A_columns*sizeof(float));
@@ -37,9 +38,8 @@ int main(int argc, char const *argv[]){
     free(B);
     free(A);
 
-    clock_t end = clock();
-    double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-    printf("%f s\n", time_spent);
+    end_time = dsecnd();
+    printf("%f s\n", end_time - start_time);
 
     return 0;
 }
