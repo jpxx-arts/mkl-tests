@@ -22,7 +22,7 @@ int check_args(int argc, int rows, int columns, const char *MATRIX_TYPE, const c
 }
 
 int create_matrix(float **matrix, int rows, int columns){
-    (*matrix) = (float *) malloc(rows*columns * sizeof(int));
+    (*matrix) = (float *) malloc(rows*columns * sizeof(float));
     if ((*matrix) == NULL) {
         printf("Allocation error");
         free(*matrix);
