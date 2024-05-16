@@ -14,15 +14,26 @@ int check_args(int argc, int rows, int columns, const char *MATRIX_TYPE, const c
         return -3;
     }
     if(strpbrk(OPS, "f") == NULL || strpbrk(OPS, "fis") == NULL){
-        printf("Options to <op>: 'f', 'fi', 'fs'\n");
+        printf("Options to <ops>: 'f', 'fi', 'fs'\n");
         return -4;
     }
 
     return 0;
 }
 
-int create_matrix(float **matrix, int rows, int columns){
+int create_float_matrix(float **matrix, int rows, int columns){
     (*matrix) = (float *) malloc(rows*columns * sizeof(float));
+    if ((*matrix) == NULL) {
+        printf("Allocation error");
+        free(*matrix);
+        return -1;
+    }
+
+    return 0;
+}
+
+int create_int_matrix(int **matrix, int rows, int columns){
+    (*matrix) = (int *) malloc(rows*columns * sizeof(int));
     if ((*matrix) == NULL) {
         printf("Allocation error");
         free(*matrix);
@@ -49,7 +60,7 @@ int auto_fill(float **matrix, int rows, int columns, int seed){
     return 0;
 }
 
-int show_matrix(float *matrix, int rows, int columns, char *matrix_name){
+int show_float_matrix(float *matrix, int rows, int columns, char *matrix_name){
     if(matrix == NULL){
         printf("Empty matrix");
         return -1;
@@ -59,6 +70,48 @@ int show_matrix(float *matrix, int rows, int columns, char *matrix_name){
     for(int i = 0; i < rows; i++){
         for(int j = 0; j < columns; j++){
             printf("%.2f ", matrix[j + (i*columns)]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+
+    return 0;
+}
+
+int show_int_matrix(int *matrix, int rows, int columns, char *matrix_name){
+    if(matrix == NULL){
+        printf("Empty matrix");
+        return -1;
+    }
+
+    printf("Matrix %s:\n", matrix_name);
+    for(int i = 0; i < rows; i++){
+        for(int j = 0; j < columns; j++){
+            printf("%d ", matrix[j + (i*columns)]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+
+    return 0;
+}
+
+// Ajustando
+int show_float_packed_matrix(float *matrix, int rows, int columns, char *matrix_name){
+    if(matrix == NULL){
+        printf("Empty matrix");
+        return -1;
+    }
+
+    printf("Matrix %s:\n", matrix_name);
+    int k = 0;
+    for(int i = 0; i < rows; i++){
+        for(int j = 0; j < columns; j++){
+            if(i > j){
+                printf("%.2f ", 0.0);
+            }else{
+                printf("%.2f ", matrix[k++]);
+            }
         }
         printf("\n");
     }
