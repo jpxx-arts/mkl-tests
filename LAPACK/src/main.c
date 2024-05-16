@@ -25,16 +25,20 @@ int main(int argc, const char *argv[]){
         return err_code;
 
     lapack_int *ipiv = NULL;
-    // Fluxo de tipo da matriz
+
+    // Fluxo de tipo da matriz:
+
+    // Para matrizes gerais
     if(!strcmp(MATRIX_TYPE, "g")){
+
         // Criação de uma matriz A
         float *A = NULL;
-        create_matrix(&A, n_rows, n_columns);
+        create_float_matrix(&A, n_rows, n_columns);
 
-        // Preenchimento de uma general matrix
+        // Preenchimento de uma matriz geral
         auto_fill(&A, n_rows, n_columns, RANDOM_SEED);
         
-        show_matrix(A, n_rows, n_columns, "A");
+        show_float_matrix(A, n_rows, n_columns, "A");
 
         // Fluxo de operações com a matriz geral
         if(strpbrk(OPS, "f")){
@@ -44,24 +48,26 @@ int main(int argc, const char *argv[]){
             lapack_int info_LU = LAPACKE_sgetrf(LAPACK_ROW_MAJOR, n_rows, n_columns, A, n_columns, ipiv);
             
             printf("LU info: %d\n", info_LU);
-            show_matrix(A, n_rows, n_columns, "A factorized");
+            show_float_matrix(A, n_rows, n_columns, "A factorized");
 
-            if(strcmp(OPS, "f"))
-            free(A);
+            show_int_matrix(ipiv, 1, n_columns, "ipiv");
+
+            if(!strcmp(OPS, "f"))
+                free(A);
 
         }
         if(strpbrk(OPS, "i")){
 
             // Inversão de uma matriz A
             float *inv_A = NULL;
-            create_matrix(&inv_A, n_rows, n_columns);
+            create_float_matrix(&inv_A, n_rows, n_columns);
             copy_matrix(&inv_A, &A, n_rows*n_columns);
-            // show_matrix(inv_A, n_rows, n_columns, "inv_A");
+            // show_float_matrix(inv_A, n_rows, n_columns, "inv_A");
 
             lapack_int info_inv = LAPACKE_sgetri(LAPACK_ROW_MAJOR, n_rows, inv_A, n_columns, ipiv);
-            printf("inv info: %d\n", info_inv);
 
-            show_matrix(inv_A, n_rows, n_columns, "A inversed");
+            printf("inv info: %d\n", info_inv);
+            show_float_matrix(inv_A, n_rows, n_columns, "A inversed");
 
             free(inv_A);
 
@@ -70,30 +76,33 @@ int main(int argc, const char *argv[]){
 
             // RHS
             float *b = NULL;
-            create_matrix(&b, n_rows, 1);
+            create_float_matrix(&b, n_rows, 1);
             auto_fill(&b, n_rows, 1, RANDOM_SEED);
-            show_matrix(b, n_rows, 1, "b");
+            show_float_matrix(b, n_rows, 1, "b");
 
             // Ax = b
             lapack_int info_solved_system = LAPACKE_sgetrs(LAPACK_ROW_MAJOR, 'N', n_rows, 1, A, n_columns, ipiv, b , 1);
+            
             printf("solved system info: %d\n", info_solved_system);
-            show_matrix(b, n_rows, 1, "x");
+            show_float_matrix(b, n_rows, 1, "x");
 
         }
     }
 
+    // Para matrizes simétricas
     else if(!strcmp(MATRIX_TYPE, "s")){
+
         // Criação de uma matriz AP
         float *AP = NULL;
         int size = n_rows*(n_rows+1)/2;
-        create_matrix(&AP, 1, size);
+        create_float_matrix(&AP, 1, size);
 
         // Preenchimento de uma packed matrix
         packed_symmetric_fill(&AP, size, RANDOM_SEED);
         
-        show_matrix(AP, 1, size, "AP");
+        // show_float_packed_matrix(AP, n_rows, n_columns, "AP");
+        show_float_matrix(AP, 1, size, "AP");
     
-        lapack_int* ipiv = NULL;
         // Fluxo de operações com a matriz simétrica
         if(strpbrk(OPS, "f")){
 
@@ -102,9 +111,9 @@ int main(int argc, const char *argv[]){
             lapack_int info_Bunch_Kaufman = LAPACKE_ssptrf(LAPACK_ROW_MAJOR, 'U', n_rows, AP, ipiv);
             
             printf("Bunch-Kaufman info: %d\n", info_Bunch_Kaufman);
-            show_matrix(AP, 1, size, "AP factorized");
+            show_float_matrix(AP, 1, size, "AP factorized");
 
-            if(strcmp(OPS, "f"))
+            if(!strcmp(OPS, "f"))
                 free(AP);
 
         }
@@ -112,33 +121,34 @@ int main(int argc, const char *argv[]){
 
             // Inversão de uma matriz A
             float *inv_AP = NULL;
-            create_matrix(&inv_AP, n_rows, n_columns);
+            create_float_matrix(&inv_AP, n_rows, n_columns);
             copy_matrix(&inv_AP, &AP, n_rows*n_columns);
-            // show_matrix(inv_AP, n_rows, n_columns, "inv_AP");
+            // show_float_matrix(inv_AP, n_rows, n_columns, "inv_AP");
 
             lapack_int info_inv = LAPACKE_ssptri(LAPACK_ROW_MAJOR, 'U', n_rows, AP, ipiv);
-            printf("inv info: %d\n", info_inv);
 
-            show_matrix(inv_AP, 1, size, "AP inversed");
+            printf("inv info: %d\n", info_inv);
+            show_float_matrix(inv_AP, 1, size, "AP inversed");
 
             free(inv_AP);
 
         }
         if(strpbrk(OPS, "s")){
-            // REVISAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAR
 
             // RHS
             float *b = NULL;
-            create_matrix(&b, n_rows, 1);
+            create_float_matrix(&b, n_rows, 1);
             auto_fill(&b, n_rows, 1, RANDOM_SEED);
-            show_matrix(b, n_rows, 1, "b");
+            show_float_matrix(b, n_rows, 1, "b");
 
             // Ax = b
             lapack_int info_solved_system = LAPACKE_ssptrs(LAPACK_ROW_MAJOR, 'U', n_rows, 1, AP, ipiv , b, 1);
+
             printf("solved system info: %d\n", info_solved_system);
-            show_matrix(b, n_rows, 1, "x");
+            show_float_matrix(b, n_rows, 1, "x");
 
             free(b);
+
         }
     }
     free(ipiv);
