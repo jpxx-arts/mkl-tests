@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-int check_args_LAPACK(int argc, const char *BIN, int rows, int columns, const char TYPE, const char *MATRIX_TYPE, const char *OPS, const int RANDOM_SEED){
+int check_args_LAPACK(const char *BIN, int rows, int columns, const char TYPE, const char *MATRIX_TYPE, const char *OPS){
     if(!strcmp(MATRIX_TYPE, "s")){
         if(rows != columns){
             printf("To one symmetric matrix the number of rows and columns must be equal\n");
@@ -10,7 +10,7 @@ int check_args_LAPACK(int argc, const char *BIN, int rows, int columns, const ch
         }
     }
     if(TYPE != 's' && TYPE != 'd' && TYPE != 'c' && TYPE != 'z'){
-            printf("Use: %s <number_rows> <number_columns> <type> <matrix_type> <ops> <seed>\n", BIN);
+        printf("Use: %s <number_rows> <number_columns> <type> <matrix_type> <ops> <seed>\n", BIN);
         printf("Options to <type>: 's', 'd', 'c', 'z'\n");
         return -5;
     }
@@ -28,7 +28,7 @@ int check_args_LAPACK(int argc, const char *BIN, int rows, int columns, const ch
     return 0;
 }
 
-int check_args_BLAS(int argc, const char *BIN, int A_rows, int A_columns, int B_rows, int B_columns, const char *OP, const int RANDOM_SEED){
+int check_args_BLAS(const char *BIN, int A_rows, int A_columns, int B_rows, int B_columns, const char *OP, const int RANDOM_SEED){
 
     return 0;
 }

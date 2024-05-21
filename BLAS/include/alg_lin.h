@@ -1,7 +1,9 @@
 #ifndef ALGLIN_H
 #define ALGLIN_H
 
-int check_args(int argc, const char *BIN, int rows, int columns, const char TYPE, const char *MATRIX_TYPE, const char *OPS, const int RANDOM_SEED);
+int check_args_LAPACK(const char *BIN, int rows, int columns, const char TYPE, const char *MATRIX_TYPE, const char *OPS);
+int check_args_BLAS(const char *BIN, int A_rows, int A_columns, int B_rows, int B_columns, const char *OP);
+
 int create_float_matrix(float **matrix, int rows, int columns);
 int auto_float_fill(float **matrix, int rows, int columns, int seed);
 int symmetric_float_fill(float **matrix, int rows, int columns, int seed);
