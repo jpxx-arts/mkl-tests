@@ -6,6 +6,7 @@ int check_args_BLAS(const char *BIN, int A_rows, int A_columns, int B_rows, int 
 
 int create_float_matrix(float **matrix, int rows, int columns);
 int auto_float_fill(float **matrix, int rows, int columns, int seed);
+int auto_float_static_fill(float *matrix, int rows, int columns, int seed);
 int symmetric_float_fill(float **matrix, int rows, int columns, int seed);
 int triangular_float_fill(float **matrix, int rows, int columns, int seed);
 int show_float_matrix(float *matrix, int rows, int columns, char *matrix_name);
@@ -17,6 +18,7 @@ int copy_float_matrix(float **dest, float **source, int size);
 
 int create_double_matrix(double **matrix, int rows, int columns);
 int auto_double_fill(double **matrix, int rows, int columns, int seed);
+int auto_double_static_fill(double *matrix, int rows, int columns, int seed);
 int symmetric_double_fill(double **matrix, int rows, int columns, int seed);
 int triangular_double_fill(double **matrix, int rows, int columns, int seed);
 int show_double_matrix(double *matrix, int rows, int columns, char *matrix_name);

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <mkl.h>
 #include "alg_lin.h"
 
@@ -32,6 +33,18 @@ int main(int argc, char const *argv[]){
                     float A[A_rows*A_columns];
                     float B[B_rows*B_columns];
                     float C[A_rows*B_columns];
+
+                    auto_float_static_fill(A, A_rows, A_columns, RANDOM_SEED);
+                    if(SHOW == 's')
+                        show_float_matrix(A, A_rows, A_columns, "A");
+
+                    auto_float_static_fill(B, B_rows, B_columns, RANDOM_SEED + 1);
+                    if(SHOW == 's')
+                        show_float_matrix(B, B_rows, B_columns, "B");
+
+                    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, A_rows, B_columns, A_columns, 1.0, A, A_columns, B, B_rows, 0.0, C, B_columns);
+                    if(SHOW == 's')
+                        show_float_matrix(C, A_rows, B_columns, "C");
                 }
                 else if(ALLOCATION == 'd'){
                     float *A = NULL;
@@ -42,16 +55,19 @@ int main(int argc, char const *argv[]){
 
                     float *C = NULL;
                     create_float_matrix(&C, A_rows, B_columns);
+                    
+                    auto_float_fill(&A, A_rows, A_columns, RANDOM_SEED);
+                    if(SHOW == 's')
+                        show_float_matrix(A, A_rows, A_columns, "A");
+
+                    auto_float_fill(&B, B_rows, B_columns, RANDOM_SEED + 1);
+                    if(SHOW == 's')
+                        show_float_matrix(B, B_rows, B_columns, "B");
+
+                    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, A_rows, B_columns, A_columns, 1.0, A, A_columns, B, B_rows, 0.0, C, B_columns);
+                    if(SHOW == 's')
+                        show_float_matrix(C, A_rows, B_columns, "C");
                 }
-
-                auto_float_fill(&A, A_rows, A_columns, RANDOM_SEED);
-                show_float_matrix(A, A_rows, A_columns, "A");
-
-                auto_float_fill(&B, B_rows, B_columns, RANDOM_SEED + 1);
-                show_float_matrix(B, B_rows, B_columns, "B");
-
-                cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, A_rows, B_columns, A_columns, 1.0, A, A_columns, B, B_rows, 0.0, C, B_columns);
-                show_float_matrix(C, A_rows, B_columns, C);
             }
 
             else if(TYPE == 'd'){
@@ -59,6 +75,18 @@ int main(int argc, char const *argv[]){
                     double A[A_rows*A_columns];
                     double B[B_rows*B_columns];
                     double C[A_rows*B_columns];
+
+                    auto_double_static_fill(A, A_rows, A_columns, RANDOM_SEED);
+                    if(SHOW == 's')
+                        show_double_matrix(A, A_rows, A_columns, "A");
+
+                    auto_double_static_fill(B, B_rows, B_columns, RANDOM_SEED + 1);
+                    if(SHOW == 's')
+                        show_double_matrix(B, B_rows, B_columns, "B");
+
+                    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, A_rows, B_columns, A_columns, 1.0, A, A_columns, B, B_rows, 0.0, C, B_columns);
+                    if(SHOW == 's')
+                        show_double_matrix(C, A_rows, B_columns, "C");
                 }
                 else if(ALLOCATION == 'd'){
                     double *A = NULL;
@@ -69,23 +97,22 @@ int main(int argc, char const *argv[]){
 
                     double *C = NULL;
                     create_double_matrix(&C, A_rows, B_columns);
+                
+                    auto_double_fill(&A, A_rows, A_columns, RANDOM_SEED);
+                    if(SHOW == 's')
+                        show_double_matrix(A, A_rows, A_columns, "A");
+
+                    auto_double_fill(&B, B_rows, B_columns, RANDOM_SEED + 1);
+                    if(SHOW == 's')
+                        show_double_matrix(B, B_rows, B_columns, "B");
+
+                    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, A_rows, B_columns, A_columns, 1.0, A, A_columns, B, B_rows, 0.0, C, B_columns);
+                    if(SHOW == 's')
+                        show_double_matrix(C, A_rows, B_columns, "C");
                 }
-
-                auto_double_fill(&A, A_rows, A_columns, RANDOM_SEED);
-                show_double_matrix(A, A_rows, A_columns, "A");
-
-                auto_double_fill(&B, B_rows, B_columns, RANDOM_SEED + 1);
-                show_double_matrix(B, B_rows, B_columns, "B");
-
-                cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, A_rows, B_columns, A_columns, 1.0, A, A_columns, B, B_rows, 0.0, C, B_columns);
-                show_double_matrix(C, A_rows, B_columns, "C");
             }
         }
     }
-
-    free(C);
-    free(B);
-    free(A);
 
     end_time = dsecnd();
     printf("%f s\n", end_time - start_time);

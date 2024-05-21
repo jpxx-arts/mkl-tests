@@ -72,6 +72,23 @@ int auto_float_fill(float **matrix, int rows, int columns, int seed){
     return 0;
 }
 
+int auto_float_static_fill(float *matrix, int rows, int columns, int seed){
+    if(matrix == NULL){
+        printf("Empty matrix");
+        return -1;
+    }
+
+    srand(seed);
+
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < columns; j++) {
+            matrix[j + (i*columns)] = rand()%10;
+        }
+    }
+
+    return 0;
+}
+
 int symmetric_float_fill(float **matrix, int rows, int columns, int seed){
     if(matrix == NULL){
         printf("Empty matrix");
@@ -293,6 +310,23 @@ int auto_double_fill(double **matrix, int rows, int columns, int seed){
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < columns; j++) {
             (*matrix)[j + (i*columns)] = rand()%10;
+        }
+    }
+
+    return 0;
+}
+
+int auto_double_static_fill(double *matrix, int rows, int columns, int seed){
+    if(matrix == NULL){
+        printf("Empty matrix");
+        return -1;
+    }
+
+    srand(seed);
+
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < columns; j++) {
+            matrix[j + (i*columns)] = rand()%10;
         }
     }
 
