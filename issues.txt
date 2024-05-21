@@ -1,0 +1,2 @@
+- Adicionar argumento de mostrar ou não os logs
+- Adicionar fluxo de memória estática
