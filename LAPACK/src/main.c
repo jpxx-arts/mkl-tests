@@ -8,8 +8,8 @@ int main(int argc, const char *argv[]){
     double start_time, end_time;
     start_time = dsecnd();
 
-    if(argc != 7) {
-        printf("Use: %s <number_rows> <number_columns> <type> <matrix_type> <ops> <seed>\n", argv[0]);
+    if(argc != 8) {
+        printf("Use: %s <number_rows> <number_columns> <type> <matrix_type> <ops> <show> <seed>\n", argv[0]);
         return -1;
     }
 
@@ -18,7 +18,8 @@ int main(int argc, const char *argv[]){
     const char TYPE = argv[3][0];
     const char *MATRIX_TYPE = argv[4];
     const char *OPS = argv[5];
-    const int RANDOM_SEED = atoi(argv[6]);
+    const char SHOW = argv[6][0];
+    const int RANDOM_SEED = atoi(argv[7]);
 
     // Validando argumentos
     int err_code = check_args(argc, argv[0], n_rows, n_columns, TYPE, MATRIX_TYPE, OPS, RANDOM_SEED);
@@ -31,7 +32,7 @@ int main(int argc, const char *argv[]){
     // Fluxo de tipo da matriz:
 
     // float
-    if(TYPE != 's'){
+    if(TYPE == 's'){
         // Para matrizes gerais
         if(!strcmp(MATRIX_TYPE, "g")){
 
@@ -42,7 +43,8 @@ int main(int argc, const char *argv[]){
             // Preenchimento de uma matriz geral
             auto_float_fill(&A, n_rows, n_columns, RANDOM_SEED);
             
-            show_float_matrix(A, n_rows, n_columns, "A");
+            if(SHOW == 's')
+                show_float_matrix(A, n_rows, n_columns, "A");
 
             // Fluxo de operações com a matriz geral
             if(strpbrk(OPS, "f")){
@@ -51,10 +53,12 @@ int main(int argc, const char *argv[]){
                 ipiv = (lapack_int *) malloc(n_columns*sizeof(lapack_int));
                 lapack_int info_LU = LAPACKE_sgetrf(LAPACK_ROW_MAJOR, n_rows, n_columns, A, n_columns, ipiv);
                 
-                printf("LU info: %d\n", info_LU);
-                show_float_matrix(A, n_rows, n_columns, "A factorized");
+                if(SHOW == 's'){
+                    printf("LU info: %d\n", info_LU);
+                    show_float_matrix(A, n_rows, n_columns, "A factorized");
 
-                show_int_matrix(ipiv, 1, n_columns, "ipiv");
+                    show_int_matrix(ipiv, 1, n_columns, "ipiv");
+                }
 
                 if(!strcmp(OPS, "f"))
                     free(A);
@@ -62,7 +66,9 @@ int main(int argc, const char *argv[]){
             }
             if(strpbrk(OPS, "i")){
                 if(!strpbrk(OPS, "f")){
-                    printf("To do this operation the matrix must be factorized\n");
+                    if(SHOW == 's')
+                        printf("To do this operation the matrix must be factorized\n");
+                    
                     return -4;
                 }
 
@@ -73,15 +79,19 @@ int main(int argc, const char *argv[]){
 
                 lapack_int info_inv = LAPACKE_sgetri(LAPACK_ROW_MAJOR, n_rows, inv_A, n_columns, ipiv);
 
-                printf("inv info: %d\n", info_inv);
-                show_float_matrix(inv_A, n_rows, n_columns, "A inversed");
+                if(SHOW == 's'){
+                    printf("inv info: %d\n", info_inv);
+                    show_float_matrix(inv_A, n_rows, n_columns, "A inversed");
+                }
 
                 free(inv_A);
 
             }
             if(strpbrk(OPS, "s")){
                 if(!strpbrk(OPS, "f")){
-                    printf("To do this operation the matrix must be factorized\n");
+                    if(SHOW == 's')
+                        printf("To do this operation the matrix must be factorized\n");
+                    
                     return -4;
                 }
 
@@ -89,7 +99,9 @@ int main(int argc, const char *argv[]){
                 float *b = NULL;
                 create_float_matrix(&b, n_rows, 1);
                 auto_float_fill(&b, n_rows, 1, RANDOM_SEED);
-                show_float_matrix(b, n_rows, 1, "b");
+                
+                if(SHOW == 's')
+                    show_float_matrix(b, n_rows, 1, "b");
 
                 // Ax = b
                 float *x = NULL;
@@ -98,8 +110,10 @@ int main(int argc, const char *argv[]){
 
                 lapack_int info_solved_system = LAPACKE_sgetrs(LAPACK_ROW_MAJOR, 'N', n_rows, 1, A, n_columns, ipiv, x, 1);
                 
-                printf("solved system info: %d\n", info_solved_system);
-                show_float_matrix(x, n_rows, 1, "x");
+                if(SHOW == 's'){
+                    printf("solved system info: %d\n", info_solved_system);
+                    show_float_matrix(x, n_rows, 1, "x");
+                }
 
                 free(x);
                 free(b);
@@ -117,7 +131,8 @@ int main(int argc, const char *argv[]){
             // Preenchimento de uma packed matrix
             packed_float_fill(&AP, size, RANDOM_SEED);
             
-            show_float_packed_matrix(AP, 'N', n_rows, n_columns, "AP");
+            if(SHOW == 's')
+                show_float_packed_matrix(AP, 'N', n_rows, n_columns, "AP");
         
             // Fluxo de operações com a matriz simétrica
             if(strpbrk(OPS, "f")){
@@ -126,8 +141,10 @@ int main(int argc, const char *argv[]){
                 ipiv = (lapack_int *) malloc(n*sizeof(lapack_int));
                 lapack_int info_Bunch_Kaufman = LAPACKE_ssptrf(LAPACK_ROW_MAJOR, 'U', n, AP, ipiv);
                 
-                printf("Bunch-Kaufman info: %d\n", info_Bunch_Kaufman);
-                show_float_matrix(AP, 1, size, "AP factorized");
+                if(SHOW == 's'){
+                    printf("Bunch-Kaufman info: %d\n", info_Bunch_Kaufman);
+                    show_float_matrix(AP, 1, size, "AP factorized");
+                }
 
                 if(!strcmp(OPS, "f"))
                     free(AP);
@@ -135,7 +152,9 @@ int main(int argc, const char *argv[]){
             }
             if(strpbrk(OPS, "i")){
                 if(!strpbrk(OPS, "f")){
-                    printf("To do this operation the matrix must be factorized\n");
+                    if(SHOW == 's')
+                        printf("To do this operation the matrix must be factorized\n");
+
                     return -4;
                 }
 
@@ -146,15 +165,19 @@ int main(int argc, const char *argv[]){
 
                 lapack_int info_inv = LAPACKE_ssptri(LAPACK_ROW_MAJOR, 'U', n, inv_AP, ipiv);
 
-                printf("inv info: %d\n", info_inv);
-                show_float_packed_matrix(inv_AP, 'N', n_rows, n_columns, "AP inversed");
+                if(SHOW == 's'){
+                    printf("inv info: %d\n", info_inv);
+                    show_float_packed_matrix(inv_AP, 'N', n_rows, n_columns, "AP inversed");
+                }
 
                 free(inv_AP);
 
             }
             if(strpbrk(OPS, "s")){
                 if(!strpbrk(OPS, "f")){
-                    printf("To do this operation the matrix must be factorized\n");
+                    if(SHOW == 's')
+                        printf("To do this operation the matrix must be factorized\n");
+
                     return -4;
                 }
 
@@ -162,7 +185,9 @@ int main(int argc, const char *argv[]){
                 float *b = NULL;
                 create_float_matrix(&b, n, 1);
                 auto_float_fill(&b, n, 1, RANDOM_SEED);
-                show_float_matrix(b, n, 1, "b");
+
+                if(SHOW == 's')
+                    show_float_matrix(b, n, 1, "b");
 
                 // Ax = b
                 float *x = NULL;
@@ -171,8 +196,10 @@ int main(int argc, const char *argv[]){
 
                 lapack_int info_solved_system = LAPACKE_ssptrs(LAPACK_ROW_MAJOR, 'U', n, 1, AP, ipiv , x, 1);
 
-                printf("solved system info: %d\n", info_solved_system);
-                show_float_matrix(x, n, 1, "x");
+                if(SHOW == 's'){
+                    printf("solved system info: %d\n", info_solved_system);
+                    show_float_matrix(x, n, 1, "x");
+                }
 
                 free(x);
                 free(b);
@@ -191,7 +218,8 @@ int main(int argc, const char *argv[]){
             // Preenchimento de uma packed matrix
             packed_float_fill(&AP, size, RANDOM_SEED);
             
-            show_float_packed_matrix(AP, 'U', n_rows, n_columns, "AP");
+            if(SHOW == 's')
+                show_float_packed_matrix(AP, 'U', n_rows, n_columns, "AP");
         
             // Fluxo de operações com a matriz simétrica
             if(strpbrk(OPS, "i")){
@@ -201,14 +229,12 @@ int main(int argc, const char *argv[]){
                 create_float_matrix(&inv_AP, 1, size);
                 copy_float_matrix(&inv_AP, &AP, size);
 
-                for(int i = 0; i < size; i++){
-                    printf("%f ", inv_AP[i]);
-                }
-
                 lapack_int info_inv = LAPACKE_stptri(LAPACK_ROW_MAJOR, 'U', 'N', n, inv_AP);
 
-                printf("inv info: %d\n", info_inv);
-                show_float_packed_matrix(inv_AP, 'U', n_rows, n_columns, "AP inversed");
+                if(SHOW == 's'){
+                    printf("inv info: %d\n", info_inv);
+                    show_float_packed_matrix(inv_AP, 'U', n_rows, n_columns, "AP inversed");
+                }
 
                 free(inv_AP);
 
@@ -219,7 +245,9 @@ int main(int argc, const char *argv[]){
                 float *b = NULL;
                 create_float_matrix(&b, n, 1);
                 auto_float_fill(&b, n, 1, RANDOM_SEED);
-                show_float_matrix(b, n, 1, "b");
+
+                if(SHOW == 's')
+                    show_float_matrix(b, n, 1, "b");
 
                 // Ax = b
                 float *x = NULL;
@@ -228,8 +256,10 @@ int main(int argc, const char *argv[]){
 
                 lapack_int info_solved_system = LAPACKE_stptrs(LAPACK_ROW_MAJOR, 'U', 'N', 'N', n, 1, AP , x, 1);
 
-                printf("solved system info: %d\n", info_solved_system);
-                show_float_matrix(x, n, 1, "x");
+                if(SHOW == 's'){
+                    printf("solved system info: %d\n", info_solved_system);
+                    show_float_matrix(x, n, 1, "x");
+                }
 
                 free(x);
                 free(b);
@@ -239,7 +269,7 @@ int main(int argc, const char *argv[]){
     }
 
     // double
-    else if(TYPE != 'd'){
+    else if(TYPE == 'd'){
         // Para matrizes gerais
         if(!strcmp(MATRIX_TYPE, "g")){
 
@@ -250,7 +280,8 @@ int main(int argc, const char *argv[]){
             // Preenchimento de uma matriz geral
             auto_double_fill(&A, n_rows, n_columns, RANDOM_SEED);
             
-            show_double_matrix(A, n_rows, n_columns, "A");
+            if(SHOW == 's')
+                show_double_matrix(A, n_rows, n_columns, "A");
 
             // Fluxo de operações com a matriz geral
             if(strpbrk(OPS, "f")){
@@ -259,10 +290,12 @@ int main(int argc, const char *argv[]){
                 ipiv = (lapack_int *) malloc(n_columns*sizeof(lapack_int));
                 lapack_int info_LU = LAPACKE_dgetrf(LAPACK_ROW_MAJOR, n_rows, n_columns, A, n_columns, ipiv);
                 
-                printf("LU info: %d\n", info_LU);
-                show_double_matrix(A, n_rows, n_columns, "A factorized");
+                if(SHOW == 's'){
+                    printf("LU info: %d\n", info_LU);
+                    show_double_matrix(A, n_rows, n_columns, "A factorized");
 
-                show_int_matrix(ipiv, 1, n_columns, "ipiv");
+                    show_int_matrix(ipiv, 1, n_columns, "ipiv");
+                }
 
                 if(!strcmp(OPS, "f"))
                     free(A);
@@ -270,7 +303,9 @@ int main(int argc, const char *argv[]){
             }
             if(strpbrk(OPS, "i")){
                 if(!strpbrk(OPS, "f")){
-                    printf("To do this operation the matrix must be factorized\n");
+                    if(SHOW == 's')
+                        printf("To do this operation the matrix must be factorized\n");
+
                     return -4;
                 }
 
@@ -281,15 +316,19 @@ int main(int argc, const char *argv[]){
 
                 lapack_int info_inv = LAPACKE_dgetri(LAPACK_ROW_MAJOR, n_rows, inv_A, n_columns, ipiv);
 
-                printf("inv info: %d\n", info_inv);
-                show_double_matrix(inv_A, n_rows, n_columns, "A inversed");
+                if(SHOW == 's'){
+                    printf("inv info: %d\n", info_inv);
+                    show_double_matrix(inv_A, n_rows, n_columns, "A inversed");
+                }
 
                 free(inv_A);
 
             }
             if(strpbrk(OPS, "s")){
                 if(!strpbrk(OPS, "f")){
-                    printf("To do this operation the matrix must be factorized\n");
+                    if(SHOW == 's')
+                        printf("To do this operation the matrix must be factorized\n");
+
                     return -4;
                 }
 
@@ -297,7 +336,9 @@ int main(int argc, const char *argv[]){
                 double *b = NULL;
                 create_double_matrix(&b, n_rows, 1);
                 auto_double_fill(&b, n_rows, 1, RANDOM_SEED);
-                show_double_matrix(b, n_rows, 1, "b");
+
+                if(SHOW == 's')
+                    show_double_matrix(b, n_rows, 1, "b");
 
                 // Ax = b
                 double *x = NULL;
@@ -306,8 +347,10 @@ int main(int argc, const char *argv[]){
 
                 lapack_int info_solved_system = LAPACKE_dgetrs(LAPACK_ROW_MAJOR, 'N', n_rows, 1, A, n_columns, ipiv, x, 1);
                 
-                printf("solved system info: %d\n", info_solved_system);
-                show_double_matrix(x, n_rows, 1, "x");
+                if(SHOW == 's'){
+                    printf("solved system info: %d\n", info_solved_system);
+                    show_double_matrix(x, n_rows, 1, "x");
+                }
 
                 free(x);
                 free(b);
@@ -324,8 +367,9 @@ int main(int argc, const char *argv[]){
 
             // Preenchimento de uma packed matrix
             packed_double_fill(&AP, size, RANDOM_SEED);
-            
-            show_double_packed_matrix(AP, 'N', n_rows, n_columns, "AP");
+
+            if(SHOW == 's')            
+                show_double_packed_matrix(AP, 'N', n_rows, n_columns, "AP");
         
             // Fluxo de operações com a matriz simétrica
             if(strpbrk(OPS, "f")){
@@ -334,8 +378,10 @@ int main(int argc, const char *argv[]){
                 ipiv = (lapack_int *) malloc(n*sizeof(lapack_int));
                 lapack_int info_Bunch_Kaufman = LAPACKE_dsptrf(LAPACK_ROW_MAJOR, 'U', n, AP, ipiv);
                 
-                printf("Bunch-Kaufman info: %d\n", info_Bunch_Kaufman);
-                show_double_matrix(AP, 1, size, "AP factorized");
+                if(SHOW == 's'){
+                    printf("Bunch-Kaufman info: %d\n", info_Bunch_Kaufman);
+                    show_double_matrix(AP, 1, size, "AP factorized");
+                }
 
                 if(!strcmp(OPS, "f"))
                     free(AP);
@@ -343,7 +389,9 @@ int main(int argc, const char *argv[]){
             }
             if(strpbrk(OPS, "i")){
                 if(!strpbrk(OPS, "f")){
-                    printf("To do this operation the matrix must be factorized\n");
+                    if(SHOW == 's')
+                        printf("To do this operation the matrix must be factorized\n");
+                        
                     return -4;
                 }
 
@@ -354,15 +402,19 @@ int main(int argc, const char *argv[]){
 
                 lapack_int info_inv = LAPACKE_dsptri(LAPACK_ROW_MAJOR, 'U', n, inv_AP, ipiv);
 
-                printf("inv info: %d\n", info_inv);
-                show_double_packed_matrix(inv_AP, 'N', n_rows, n_columns, "AP inversed");
+                if(SHOW == 's'){
+                    printf("inv info: %d\n", info_inv);
+                    show_double_packed_matrix(inv_AP, 'N', n_rows, n_columns, "AP inversed");
+                }
 
                 free(inv_AP);
 
             }
             if(strpbrk(OPS, "s")){
                 if(!strpbrk(OPS, "f")){
-                    printf("To do this operation the matrix must be factorized\n");
+                    if(SHOW == 's')
+                        printf("To do this operation the matrix must be factorized\n");
+
                     return -4;
                 }
 
@@ -370,7 +422,9 @@ int main(int argc, const char *argv[]){
                 double *b = NULL;
                 create_double_matrix(&b, n, 1);
                 auto_double_fill(&b, n, 1, RANDOM_SEED);
-                show_double_matrix(b, n, 1, "b");
+
+                if(SHOW == 's')
+                    show_double_matrix(b, n, 1, "b");
 
                 // Ax = b
                 double *x = NULL;
@@ -379,8 +433,10 @@ int main(int argc, const char *argv[]){
 
                 lapack_int info_solved_system = LAPACKE_dsptrs(LAPACK_ROW_MAJOR, 'U', n, 1, AP, ipiv , x, 1);
 
-                printf("solved system info: %d\n", info_solved_system);
-                show_double_matrix(x, n, 1, "x");
+                if(SHOW == 's'){
+                    printf("solved system info: %d\n", info_solved_system);
+                    show_double_matrix(x, n, 1, "x");
+                }
 
                 free(x);
                 free(b);
@@ -399,7 +455,8 @@ int main(int argc, const char *argv[]){
             // Preenchimento de uma packed matrix
             packed_double_fill(&AP, size, RANDOM_SEED);
             
-            show_double_packed_matrix(AP, 'U', n_rows, n_columns, "AP");
+            if(SHOW == 's')
+                show_double_packed_matrix(AP, 'U', n_rows, n_columns, "AP");
         
             // Fluxo de operações com a matriz simétrica
             if(strpbrk(OPS, "i")){
@@ -409,14 +466,14 @@ int main(int argc, const char *argv[]){
                 create_double_matrix(&inv_AP, 1, size);
                 copy_double_matrix(&inv_AP, &AP, size);
 
-                for(int i = 0; i < size; i++){
-                    printf("%f ", inv_AP[i]);
-                }
+
 
                 lapack_int info_inv = LAPACKE_dtptri(LAPACK_ROW_MAJOR, 'U', 'N', n, inv_AP);
 
-                printf("inv info: %d\n", info_inv);
-                show_double_packed_matrix(inv_AP, 'U', n_rows, n_columns, "AP inversed");
+                if(SHOW == 's'){
+                    printf("inv info: %d\n", info_inv);
+                    show_double_packed_matrix(inv_AP, 'U', n_rows, n_columns, "AP inversed");
+                }
 
                 free(inv_AP);
 
@@ -427,7 +484,9 @@ int main(int argc, const char *argv[]){
                 double *b = NULL;
                 create_double_matrix(&b, n, 1);
                 auto_double_fill(&b, n, 1, RANDOM_SEED);
-                show_double_matrix(b, n, 1, "b");
+
+                if(SHOW == 's')
+                    show_double_matrix(b, n, 1, "b");
 
                 // Ax = b
                 double *x = NULL;
@@ -436,8 +495,10 @@ int main(int argc, const char *argv[]){
 
                 lapack_int info_solved_system = LAPACKE_dtptrs(LAPACK_ROW_MAJOR, 'U', 'N', 'N', n, 1, AP , x, 1);
 
-                printf("solved system info: %d\n", info_solved_system);
-                show_double_matrix(x, n, 1, "x");
+                if(SHOW == 's'){
+                    printf("solved system info: %d\n", info_solved_system);
+                    show_double_matrix(x, n, 1, "x");
+                }
 
                 free(x);
                 free(b);

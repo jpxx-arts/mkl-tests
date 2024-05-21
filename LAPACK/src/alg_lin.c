@@ -28,7 +28,6 @@ int check_args(int argc, const char *BIN, int rows, int columns, const char TYPE
     return 0;
 }
 
-// float
 int create_float_matrix(float **matrix, int rows, int columns){
     (*matrix) = (float *) malloc(rows*columns * sizeof(float));
     if ((*matrix) == NULL) {
