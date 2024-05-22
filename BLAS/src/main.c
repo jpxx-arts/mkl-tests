@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <mkl.h>
-#include "alg_lin.h"
+#include "../include/alg_lin.h"
 
 int main(int argc, char const *argv[]){
     double start_time, end_time;
