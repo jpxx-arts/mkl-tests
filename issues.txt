@@ -1,3 +1,0 @@
-- Adicionar argumento de mostrar ou não os logs (feito)
-- Adicionar fluxo de memória estática (não acho que seja mais necessário pois a memória stack é pequena demais em relação a velocidade do mkl)
-- Adicionar números complexos 
