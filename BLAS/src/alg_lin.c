@@ -992,3 +992,192 @@ int copy_complex_double_matrix(lapack_complex_double **dest, lapack_complex_doub
 
     return 0;
 }
+
+// BLAS
+void multiply_float_general_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const float alpha, const float beta){
+    float *A = NULL;
+    create_float_matrix(&A, A_rows, A_columns);
+    
+    float *B = NULL;
+    create_float_matrix(&B, B_rows, B_columns);
+
+    float *C = NULL;
+    create_float_matrix(&C, A_rows, B_columns);
+    
+    auto_float_fill(&A, A_rows, A_columns, RANDOM_SEED);
+    if(SHOW == 's')
+        show_float_matrix(A, A_rows, A_columns, "A");
+
+    auto_float_fill(&B, B_rows, B_columns, RANDOM_SEED + 1);
+    if(SHOW == 's')
+        show_float_matrix(B, B_rows, B_columns, "B");
+
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, A_rows, B_columns, A_columns, alpha, A, A_columns, B, B_rows, beta, C, B_columns);
+    if(SHOW == 's')
+        show_float_matrix(C, A_rows, B_columns, "C");
+}
+
+void multiply_double_general_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const double alpha, const double beta){
+    double *A = NULL;
+    create_double_matrix(&A, A_rows, A_columns);
+    
+    double *B = NULL;
+    create_double_matrix(&B, B_rows, B_columns);
+
+    double *C = NULL;
+    create_double_matrix(&C, A_rows, B_columns);
+
+    auto_double_fill(&A, A_rows, A_columns, RANDOM_SEED);
+    if(SHOW == 's')
+        show_double_matrix(A, A_rows, A_columns, "A");
+
+    auto_double_fill(&B, B_rows, B_columns, RANDOM_SEED + 1);
+    if(SHOW == 's')
+        show_double_matrix(B, B_rows, B_columns, "B");
+
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, A_rows, B_columns, A_columns, 1.0, A, A_columns, B, B_rows, 0.0, C, B_columns);
+    if(SHOW == 's')
+        show_double_matrix(C, A_rows, B_columns, "C");
+}
+
+void multiply_complex_float_general_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, MKL_Complex8 *alpha, MKL_Complex8 *beta){
+    MKL_Complex8 *A = NULL;
+    create_complex_float_matrix(&A, A_rows, A_columns);
+    
+    MKL_Complex8 *B = NULL;
+    create_complex_float_matrix(&B, B_rows, B_columns);
+
+    MKL_Complex8 *C = NULL;
+    create_complex_float_matrix(&C, A_rows, B_columns);
+
+    auto_complex_float_fill(&A, A_rows, A_columns, RANDOM_SEED);
+    if(SHOW == 's')
+        show_complex_float_matrix(A, A_rows, A_columns, "A");
+
+    auto_complex_float_fill(&B, B_rows, B_columns, RANDOM_SEED + 1);
+    if(SHOW == 's')
+        show_complex_float_matrix(B, B_rows, B_columns, "B");
+
+    cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, A_rows, B_columns, A_columns, &alpha, A, A_columns, B, B_rows, &beta, C, B_columns);
+
+    if(SHOW == 's')
+        show_complex_float_matrix(C, A_rows, B_columns, "C");
+}
+
+void multiply_complex_double_general_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, MKL_Complex16 *alpha, MKL_Complex16 *beta){
+    MKL_Complex16 *A = NULL;
+    create_complex_double_matrix(&A, A_rows, A_columns);
+    
+    MKL_Complex16 *B = NULL;
+    create_complex_double_matrix(&B, B_rows, B_columns);
+
+    MKL_Complex16 *C = NULL;
+    create_complex_double_matrix(&C, A_rows, B_columns);
+
+    auto_complex_double_fill(&A, A_rows, A_columns, RANDOM_SEED);
+    if(SHOW == 's')
+        show_complex_double_matrix(A, A_rows, A_columns, "A");
+
+    auto_complex_double_fill(&B, B_rows, B_columns, RANDOM_SEED + 1);
+    if(SHOW == 's')
+        show_complex_double_matrix(B, B_rows, B_columns, "B");
+
+    cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, A_rows, B_columns, A_columns, &alpha, A, A_columns, B, B_rows, &beta, C, B_columns);
+
+    if(SHOW == 's')
+        show_complex_double_matrix(C, A_rows, B_columns, "C");
+}
+
+void multiply_float_symmetric_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const float alpha, const float beta){
+    float *A = NULL;
+    create_float_matrix(&A, A_rows, A_columns);
+    
+    float *B = NULL;
+    create_float_matrix(&B, B_rows, B_columns);
+
+    float *C = NULL;
+    create_float_matrix(&C, A_rows, B_columns);
+    
+    symmetric_float_fill(&A, A_rows, A_columns, RANDOM_SEED);
+    if(SHOW == 's')
+        show_float_matrix(A, A_rows, A_columns, "A");
+
+    auto_float_fill(&B, B_rows, B_columns, RANDOM_SEED + 1);
+    if(SHOW == 's')
+        show_float_matrix(B, B_rows, B_columns, "B");
+
+    cblas_ssymm(CblasRowMajor, CblasLeft, CblasUpper, A_rows, B_columns, alpha, A, A_rows, B, B_columns, beta, C, B_columns);
+    if(SHOW == 's')
+        show_float_matrix(C, A_rows, B_columns, "C");
+}
+
+void multiply_double_symmetric_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const double alpha, const double beta){
+    double *A = NULL;
+    create_double_matrix(&A, A_rows, A_columns);
+    
+    double *B = NULL;
+    create_double_matrix(&B, B_rows, B_columns);
+
+    double *C = NULL;
+    create_double_matrix(&C, A_rows, B_columns);
+
+    symmetric_double_fill(&A, A_rows, A_columns, RANDOM_SEED);
+    if(SHOW == 's')
+        show_double_matrix(A, A_rows, A_columns, "A");
+
+    auto_double_fill(&B, B_rows, B_columns, RANDOM_SEED + 1);
+    if(SHOW == 's')
+        show_double_matrix(B, B_rows, B_columns, "B");
+
+    cblas_dsymm(CblasRowMajor, CblasLeft, CblasUpper, A_rows, B_columns, alpha, A, A_rows, B, B_columns, beta, C, B_columns);
+    if(SHOW == 's')
+        show_double_matrix(C, A_rows, B_columns, "C");
+}
+
+void multiply_complex_float_symmetric_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, MKL_Complex8 *alpha, MKL_Complex8 *beta){
+    MKL_Complex8 *A = NULL;
+    create_complex_float_matrix(&A, A_rows, A_columns);
+    
+    MKL_Complex8 *B = NULL;
+    create_complex_float_matrix(&B, B_rows, B_columns);
+
+    MKL_Complex8 *C = NULL;
+    create_complex_float_matrix(&C, A_rows, B_columns);
+
+    symmetric_complex_float_fill(&A, A_rows, A_columns, RANDOM_SEED);
+    if(SHOW == 's')
+        show_complex_float_matrix(A, A_rows, A_columns, "A");
+
+    auto_complex_float_fill(&B, B_rows, B_columns, RANDOM_SEED + 1);
+    if(SHOW == 's')
+        show_complex_float_matrix(B, B_rows, B_columns, "B");
+
+    cblas_csymm(CblasRowMajor, CblasLeft, CblasUpper, A_rows, B_columns, &alpha, A, A_rows, B, B_columns, &beta, C, B_columns);
+    if(SHOW == 's')
+        show_complex_float_matrix(C, A_rows, B_columns, "C");
+}
+
+void multiply_complex_double_symmetric_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, MKL_Complex16 *alpha, MKL_Complex16 *beta){
+    MKL_Complex16 *A = NULL;
+    create_complex_double_matrix(&A, A_rows, A_columns);
+    
+    MKL_Complex16 *B = NULL;
+    create_complex_double_matrix(&B, B_rows, B_columns);
+
+    MKL_Complex16 *C = NULL;
+    create_complex_double_matrix(&C, A_rows, B_columns);
+
+    symmetric_complex_double_fill(&A, A_rows, A_columns, RANDOM_SEED);
+    if(SHOW == 's')
+        show_complex_double_matrix(A, A_rows, A_columns, "A");
+
+    auto_complex_double_fill(&B, B_rows, B_columns, RANDOM_SEED + 1);
+    if(SHOW == 's')
+        show_complex_double_matrix(B, B_rows, B_columns, "B");
+
+    cblas_zsymm(CblasRowMajor, CblasLeft, CblasUpper, A_rows, B_columns, &alpha, A, A_rows, B, B_columns, &beta, C, B_columns);
+    if(SHOW == 's')
+        show_complex_double_matrix(C, A_rows, B_columns, "C");
+}
+
+// 
