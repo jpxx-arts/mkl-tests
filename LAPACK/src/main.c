@@ -66,8 +66,7 @@ int main(int argc, const char *argv[]){
                 }
                 if(strpbrk(OPS, "i")){
                     if(!strpbrk(OPS, "f")){
-                        if(SHOW == 's')
-                            printf("To do this operation the matrix must be factorized\n");
+                        printf("To do this operation the matrix must be factorized\n");
                         
                         return -4;
                     }
@@ -89,8 +88,7 @@ int main(int argc, const char *argv[]){
                 }
                 if(strpbrk(OPS, "s")){
                     if(!strpbrk(OPS, "f")){
-                        if(SHOW == 's')
-                            printf("To do this operation the matrix must be factorized\n");
+                        printf("To do this operation the matrix must be factorized\n");
                         
                         return -4;
                     }
@@ -152,8 +150,7 @@ int main(int argc, const char *argv[]){
                 }
                 if(strpbrk(OPS, "i")){
                     if(!strpbrk(OPS, "f")){
-                        if(SHOW == 's')
-                            printf("To do this operation the matrix must be factorized\n");
+                        printf("To do this operation the matrix must be factorized\n");
 
                         return -4;
                     }
@@ -175,8 +172,7 @@ int main(int argc, const char *argv[]){
                 }
                 if(strpbrk(OPS, "s")){
                     if(!strpbrk(OPS, "f")){
-                        if(SHOW == 's')
-                            printf("To do this operation the matrix must be factorized\n");
+                        printf("To do this operation the matrix must be factorized\n");
 
                         return -4;
                     }
@@ -303,8 +299,7 @@ int main(int argc, const char *argv[]){
                 }
                 if(strpbrk(OPS, "i")){
                     if(!strpbrk(OPS, "f")){
-                        if(SHOW == 's')
-                            printf("To do this operation the matrix must be factorized\n");
+                        printf("To do this operation the matrix must be factorized\n");
 
                         return -4;
                     }
@@ -326,8 +321,7 @@ int main(int argc, const char *argv[]){
                 }
                 if(strpbrk(OPS, "s")){
                     if(!strpbrk(OPS, "f")){
-                        if(SHOW == 's')
-                            printf("To do this operation the matrix must be factorized\n");
+                        printf("To do this operation the matrix must be factorized\n");
 
                         return -4;
                     }
@@ -389,8 +383,7 @@ int main(int argc, const char *argv[]){
                 }
                 if(strpbrk(OPS, "i")){
                     if(!strpbrk(OPS, "f")){
-                        if(SHOW == 's')
-                            printf("To do this operation the matrix must be factorized\n");
+                        printf("To do this operation the matrix must be factorized\n");
                             
                         return -4;
                     }
@@ -412,8 +405,7 @@ int main(int argc, const char *argv[]){
                 }
                 if(strpbrk(OPS, "s")){
                     if(!strpbrk(OPS, "f")){
-                        if(SHOW == 's')
-                            printf("To do this operation the matrix must be factorized\n");
+                        printf("To do this operation the matrix must be factorized\n");
 
                         return -4;
                     }
@@ -542,8 +534,7 @@ int main(int argc, const char *argv[]){
                 }
                 if(strpbrk(OPS, "i")){
                     if(!strpbrk(OPS, "f")){
-                        if(SHOW == 's')
-                            printf("To do this operation the matrix must be factorized\n");
+                        printf("To do this operation the matrix must be factorized\n");
                         
                         return -4;
                     }
@@ -565,8 +556,7 @@ int main(int argc, const char *argv[]){
                 }
                 if(strpbrk(OPS, "s")){
                     if(!strpbrk(OPS, "f")){
-                        if(SHOW == 's')
-                            printf("To do this operation the matrix must be factorized\n");
+                        printf("To do this operation the matrix must be factorized\n");
                         
                         return -4;
                     }
@@ -628,8 +618,7 @@ int main(int argc, const char *argv[]){
                 }
                 if(strpbrk(OPS, "i")){
                     if(!strpbrk(OPS, "f")){
-                        if(SHOW == 's')
-                            printf("To do this operation the matrix must be factorized\n");
+                        printf("To do this operation the matrix must be factorized\n");
 
                         return -4;
                     }
@@ -651,8 +640,7 @@ int main(int argc, const char *argv[]){
                 }
                 if(strpbrk(OPS, "s")){
                     if(!strpbrk(OPS, "f")){
-                        if(SHOW == 's')
-                            printf("To do this operation the matrix must be factorized\n");
+                        printf("To do this operation the matrix must be factorized\n");
 
                         return -4;
                     }
@@ -779,8 +767,7 @@ int main(int argc, const char *argv[]){
                 }
                 if(strpbrk(OPS, "i")){
                     if(!strpbrk(OPS, "f")){
-                        if(SHOW == 's')
-                            printf("To do this operation the matrix must be factorized\n");
+                        printf("To do this operation the matrix must be factorized\n");
                         
                         return -4;
                     }
@@ -802,8 +789,7 @@ int main(int argc, const char *argv[]){
                 }
                 if(strpbrk(OPS, "s")){
                     if(!strpbrk(OPS, "f")){
-                        if(SHOW == 's')
-                            printf("To do this operation the matrix must be factorized\n");
+                        printf("To do this operation the matrix must be factorized\n");
                         
                         return -4;
                     }
@@ -865,8 +851,7 @@ int main(int argc, const char *argv[]){
                 }
                 if(strpbrk(OPS, "i")){
                     if(!strpbrk(OPS, "f")){
-                        if(SHOW == 's')
-                            printf("To do this operation the matrix must be factorized\n");
+                        printf("To do this operation the matrix must be factorized\n");
 
                         return -4;
                     }
@@ -888,8 +873,7 @@ int main(int argc, const char *argv[]){
                 }
                 if(strpbrk(OPS, "s")){
                     if(!strpbrk(OPS, "f")){
-                        if(SHOW == 's')
-                            printf("To do this operation the matrix must be factorized\n");
+                        printf("To do this operation the matrix must be factorized\n");
 
                         return -4;
                     }
