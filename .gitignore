@@ -1,2 +1,6 @@
 .vscode/
 issues.txt
+BLAS/bin/*
+BLAS/obj/*
+LAPACK/bin/*
+LAPACK/obj/*
