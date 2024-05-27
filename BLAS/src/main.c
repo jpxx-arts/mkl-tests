@@ -112,6 +112,46 @@ int main(int argc, char const *argv[]){
 
                 break;
             }
+
+            case 'e': {
+                int non_zeros_number;
+                switch(TYPE){
+                    case 's': {
+                        const float alpha = 1.0;
+                        const float beta = 0.0;
+
+                        multiply_sparse_float_general_matrices(DEFINED_MULTIPLICATION_ARGS, alpha, beta);
+
+                        break;
+                    }
+
+                    case 'd': {
+                        const double alpha = 1.0;
+                        const double beta = 0.0;
+
+                        multiply_double_symmetric_matrices(DEFINED_MULTIPLICATION_ARGS, alpha, beta);
+                        break;
+                    }
+
+                    case 'c': {
+                        MKL_Complex8 alpha = {1.0, 1.0};
+                        MKL_Complex8 beta = {0.0, 0.0};
+
+                        multiply_complex_float_symmetric_matrices(DEFINED_MULTIPLICATION_ARGS, &alpha, &beta);
+
+                        break;
+                    }
+
+                    case 'z': {
+                        MKL_Complex16 alpha = {1.0, 1.0};
+                        MKL_Complex16 beta = {0.0, 0.0};
+
+                        multiply_complex_double_symmetric_matrices(DEFINED_MULTIPLICATION_ARGS, &alpha, &beta);
+
+                        break;
+                    }
+                }
+            } 
         }
     }
 

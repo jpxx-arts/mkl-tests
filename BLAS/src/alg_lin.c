@@ -1180,4 +1180,126 @@ void multiply_complex_double_symmetric_matrices(int A_rows, int A_columns, int B
         show_complex_double_matrix(C, A_rows, B_columns, "C");
 }
 
-// 
+// Sparse BLAS 
+int auto_sparse_float_fill(float **matrix, int rows, int columns, int *non_zeros_number, int seed, float **values, int **columns_arr, int **pointerB, int **pointerE){
+    if(matrix == NULL){
+        printf("Empty matrix");
+        return -1;
+    }
+
+    srand(seed);
+
+    int k = 0, m = 0, l = 0;
+    int is_row_first_non_zero_element;
+    for(int i = 0; i < rows; i++){
+        is_row_first_non_zero_element = 0;
+        if(i != 0)
+            (*pointerE)[m++] = *non_zeros_number;
+        for(int j = 0; j < columns; j++){
+            if(rand() < 0.8 * RAND_MAX){
+                (*matrix)[j + (i * columns)] = 0;
+            } else {
+                if(is_row_first_non_zero_element == 0){
+                    (*pointerB[k++]) = *non_zeros_number;
+                    is_row_first_non_zero_element = 1;
+                }
+
+                (*matrix)[j + (i * columns)] = rand() % 10;
+                (*values)[l] = (*matrix)[j + (i * columns)];
+                (*columns_arr)[l] = j;
+                l++;
+                (*non_zeros_number)++;
+            }
+        }
+    }
+    (*pointerE[m]) = *non_zeros_number;
+
+    return 0;
+}
+
+int auto_sparse_double_fill(double **matrix, int rows, int columns, int seed, double **values, int **columns_arr, int **pointerB, int **pointerE, int *non_zeros_number){
+    if(matrix == NULL){
+        printf("Empty matrix");
+        return -1;
+    }
+
+    srand(seed);
+
+    int k = 0, m = 0, l = 0;
+    int is_row_first_non_zero_element;
+    for(int i = 0; i < rows; i++){
+        is_row_first_non_zero_element = 0;
+        if(i != 0)
+            (*pointerE)[m++] = *non_zeros_number;
+        for(int j = 0; j < columns; j++){
+            if(rand() < 0.8 * RAND_MAX){
+                (*matrix)[j + (i * columns)] = 0;
+            } else {
+                if(is_row_first_non_zero_element == 0){
+                    (*pointerB[k++]) = *non_zeros_number;
+                    is_row_first_non_zero_element = 1;
+                }
+
+                (*matrix)[j + (i * columns)] = rand() % 10;
+                (*values)[l] = (*matrix)[j + (i * columns)];
+                (*columns_arr)[l] = j;
+                l++;
+                (*non_zeros_number)++;
+            }
+        }
+    }
+    (*pointerE[m]) = *non_zeros_number;
+
+    return 0;
+}
+
+void multiply_sparse_float_general_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const float alpha, const float beta){
+    int *non_zeros_number = (int *) malloc(A_rows*A_columns * sizeof(int)); // Consertar para que non_zeros_number seja preenchido antes dos outros.
+    float *values = (float *) malloc((*non_zeros_number) * sizeof(float));
+    int *columns_arr = (int *) malloc((*non_zeros_number) * sizeof(int));
+    int *pointerB = (int *) malloc((A_rows) * sizeof(int));
+    int *pointerE = (int *) malloc((A_rows) * sizeof(int));
+
+    float *A = NULL;
+    create_float_matrix(&A, A_rows, A_columns);
+    
+    float *B = NULL;
+    create_float_matrix(&B, B_rows, B_columns);
+
+    float *C = NULL;
+    create_float_matrix(&C, A_rows, B_columns);
+    
+    auto_sparse_float_fill(&A, A_rows, A_columns, non_zeros_number, RANDOM_SEED, &values, &columns_arr, &pointerB, &pointerE); // Separar em duas funções para extrair CSR (para non_zeros_number ser preenchido primeiro)
+    if(SHOW == 's')
+        show_float_matrix(A, A_rows, A_columns, "A");
+
+    auto_float_fill(&B, B_rows, B_columns, RANDOM_SEED + 1);
+    if(SHOW == 's')
+        show_float_matrix(B, B_rows, B_columns, "B");
+
+    float *A_csr_values = NULL;
+    create_float_matrix(&A_csr_values, 1, *non_zeros_number);
+
+    // MKL_INT *info_csr_compression;
+    // const MKL_INT job[] = {0, 0, 0, 2, *non_zeros_number, 0};
+    // mkl_sdnscsr(job, &A_rows, &A_columns, A, &A_columns, A_csr_values, columns_arr, row_index_arr, info_csr_compression);
+
+    sparse_matrix_t A_csr;
+    sparse_status_t status_csr = mkl_sparse_s_create_csr(&A_csr, SPARSE_INDEX_BASE_ZERO, A_rows, A_columns, pointerB, pointerE, columns_arr, values);
+
+    struct matrix_descr descr;
+    descr.type = SPARSE_MATRIX_TYPE_GENERAL;
+    sparse_status_t info_mult = mkl_sparse_s_mm(SPARSE_OPERATION_NON_TRANSPOSE, alpha, A_csr, descr, SPARSE_LAYOUT_ROW_MAJOR, B, B_columns, B_columns, beta, C, B_columns);
+
+    if(SHOW == 's')
+        show_float_matrix(C, A_rows, B_columns, "C");
+
+    free(A_csr_values);
+    free(C);
+    free(B);
+    free(A);
+    free(pointerE);
+    free(pointerB);
+    free(columns_arr);
+    free(values);
+}

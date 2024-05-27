@@ -63,4 +63,11 @@ void multiply_double_symmetric_matrices(int A_rows, int A_columns, int B_rows, i
 void multiply_complex_float_symmetric_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, MKL_Complex8 *alpha, MKL_Complex8 *beta);
 void multiply_complex_double_symmetric_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, MKL_Complex16 *alpha, MKL_Complex16 *beta);
 
+// Sparse BLAS
+int auto_sparse_float_fill(float **matrix, int rows, int columns, int *non_zeros_number, int seed, float **values, int **columns_arr, int **pointerB, int **pointerE);
+int auto_sparse_double_fill(double **matrix, int rows, int columns, int *non_zeros_number, int seed, int **values, int **columns_arr, int **pointerE);
+
+void multiply_sparse_float_general_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const float alpha, const float beta);
+void multiply_sparse_double_general_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const double alpha, const double beta);
+
 #endif
