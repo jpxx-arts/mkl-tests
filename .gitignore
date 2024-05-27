@@ -1,6 +1,6 @@
 .vscode/
 issues.txt
-BLAS/bin/*
-BLAS/obj/*
-LAPACK/bin/*
-LAPACK/obj/*
+BLAS/bin/out
+BLAS/obj/alg_lin.o
+LAPACK/bin/out
+LAPACK/obj/alg_lin.o
