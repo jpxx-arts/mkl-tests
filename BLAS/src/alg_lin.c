@@ -1065,7 +1065,7 @@ void multiply_complex_float_general_matrices(int A_rows, int A_columns, int B_ro
     if(SHOW == 's')
         show_complex_float_matrix(B, B_rows, B_columns, "B");
 
-    cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, A_rows, B_columns, A_columns, &alpha, A, A_columns, B, B_rows, &beta, C, B_columns);
+    cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, A_rows, B_columns, A_columns, alpha, A, A_columns, B, B_rows, beta, C, B_columns);
 
     if(SHOW == 's')
         show_complex_float_matrix(C, A_rows, B_columns, "C");
@@ -1093,7 +1093,7 @@ void multiply_complex_double_general_matrices(int A_rows, int A_columns, int B_r
     if(SHOW == 's')
         show_complex_double_matrix(B, B_rows, B_columns, "B");
 
-    cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, A_rows, B_columns, A_columns, &alpha, A, A_columns, B, B_rows, &beta, C, B_columns);
+    cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, A_rows, B_columns, A_columns, alpha, A, A_columns, B, B_rows, beta, C, B_columns);
 
     if(SHOW == 's')
         show_complex_double_matrix(C, A_rows, B_columns, "C");
