@@ -923,7 +923,6 @@ int show_complex_double_packed_matrix(lapack_complex_double *matrix, char uplo, 
             break;
     }
 
-
     return 0;
 }
 
@@ -1320,8 +1319,10 @@ void multiply_sparse_float_general_matrices(int A_rows, int A_columns, int B_row
     descr.type = SPARSE_MATRIX_TYPE_GENERAL;
     sparse_status_t info_mult = mkl_sparse_s_mm(SPARSE_OPERATION_NON_TRANSPOSE, alpha, A_csr, descr, SPARSE_LAYOUT_ROW_MAJOR, B, B_columns, B_columns, beta, C, B_columns);
 
-    if(SHOW == 's')
+    if(SHOW == 's'){
+        printf("mult info: %d\n", info_mult);
         show_float_matrix(C, A_rows, B_columns, "C");
+    }
 
     free(C);
     free(B);
@@ -1365,8 +1366,10 @@ void multiply_sparse_double_general_matrices(int A_rows, int A_columns, int B_ro
     descr.type = SPARSE_MATRIX_TYPE_GENERAL;
     sparse_status_t info_mult = mkl_sparse_d_mm(SPARSE_OPERATION_NON_TRANSPOSE, alpha, A_csr, descr, SPARSE_LAYOUT_ROW_MAJOR, B, B_columns, B_columns, beta, C, B_columns);
 
-    if(SHOW == 's')
-        show_double_matrix(C, A_rows, B_columns, "C");
+    if(SHOW == 's'){
+        printf("mult info: %d\n", info_mult);
+        show_float_matrix(C, A_rows, B_columns, "C");
+    }
 
     free(C);
     free(B);
