@@ -133,23 +133,23 @@ int main(int argc, char const *argv[]){
                         break;
                     }
 
-                    // case 'c': {
-                    //     MKL_Complex8 alpha = {1.0, 1.0};
-                    //     MKL_Complex8 beta = {0.0, 0.0};
+                    case 'c': {
+                        MKL_Complex8 alpha = {1.0, 1.0};
+                        MKL_Complex8 beta = {0.0, 0.0};
 
-                    //     multiply_complex_float_symmetric_matrices(DEFINED_MULTIPLICATION_ARGS, &alpha, &beta);
+                        multiply_sparse_complex_float_general_matrices(DEFINED_MULTIPLICATION_ARGS, &alpha, &beta);
 
-                    //     break;
-                    // }
+                        break;
+                    }
 
-                    // case 'z': {
-                    //     MKL_Complex16 alpha = {1.0, 1.0};
-                    //     MKL_Complex16 beta = {0.0, 0.0};
+                    case 'z': {
+                        MKL_Complex16 alpha = {1.0, 1.0};
+                        MKL_Complex16 beta = {0.0, 0.0};
 
-                    //     multiply_complex_double_symmetric_matrices(DEFINED_MULTIPLICATION_ARGS, &alpha, &beta);
+                        multiply_sparse_complex_double_general_matrices(DEFINED_MULTIPLICATION_ARGS, &alpha, &beta);
 
-                    //     break;
-                    // }
+                        break;
+                    }
                 }
             } 
         }

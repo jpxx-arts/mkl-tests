@@ -1222,7 +1222,7 @@ int auto_sparse_float_fill(float **matrix, int rows, int columns, int *non_zeros
 
     for(int i = 0; i < rows; i++){
         for(int j = 0; j < columns; j++){
-            if(rand() < 0.6 * RAND_MAX){
+            if(rand() < 0.7 * RAND_MAX){
                 (*matrix)[j + (i * columns)] = 0;
             } else {
                 (*matrix)[j + (i * columns)] = rand() % 10;
@@ -1244,11 +1244,57 @@ int auto_sparse_double_fill(double **matrix, int rows, int columns, int *non_zer
 
     for(int i = 0; i < rows; i++){
         for(int j = 0; j < columns; j++){
-            if(rand() < 0.6 * RAND_MAX){
+            if(rand() < 0.7 * RAND_MAX){
                 (*matrix)[j + (i * columns)] = 0;
             } else {
                 (*matrix)[j + (i * columns)] = rand() % 10;
                 (*non_zeros_number)++;
+            }
+        }
+    }
+
+    return 0;
+}
+
+int auto_sparse_complex_float_fill(lapack_complex_float **matrix, int rows, int columns, int *non_zeros_number, int seed){
+    if(matrix == NULL){
+        printf("Empty matrix");
+        return -1;
+    }
+
+    srand(seed);
+
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < columns; j++) {
+            if(rand() < 0.7 * RAND_MAX){
+                (*matrix)[j + (i*columns)].real = 0;
+                (*matrix)[j + (i*columns)].imag = 0;
+            } else{
+                (*matrix)[j + (i*columns)].real = rand()%10;
+                (*matrix)[j + (i*columns)].imag = rand()%10;
+            }
+        }
+    }
+
+    return 0;
+}
+
+int auto_sparse_complex_double_fill(lapack_complex_double **matrix, int rows, int columns, int *non_zeros_number, int seed){
+    if(matrix == NULL){
+        printf("Empty matrix");
+        return -1;
+    }
+
+    srand(seed);
+
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < columns; j++) {
+            if(rand() < 0.7 * RAND_MAX){
+                (*matrix)[j + (i*columns)].real = 0;
+                (*matrix)[j + (i*columns)].imag = 0;
+            } else{
+                (*matrix)[j + (i*columns)].real = rand()%10;
+                (*matrix)[j + (i*columns)].imag = rand()%10;
             }
         }
     }
@@ -1280,6 +1326,38 @@ void extract_csr_compression_double_parameters(double *matrix, int rows, int col
                 non_zeros_number++;
                 (*columns_arr)[k] = j;
                 (*values)[k++] = matrix[j + (i * columns)];
+            }
+        }
+        (*pointerE)[i] = non_zeros_number;
+    }
+}
+
+void extract_csr_compression_float_complex_parameters(MKL_Complex8 **matrix, int rows, int columns, MKL_Complex8 **values, int **columns_arr, int **pointerB, int **pointerE){
+    int non_zeros_number = 0, k = 0;
+    for(int i = 0; i < rows; i++){
+        (*pointerB)[i] = non_zeros_number;
+        for(int j = 0; j < columns; j++){
+            if((*matrix)[j + (i * columns)].real != 0 && (*matrix)[j + (i * columns)].imag != 0){
+                non_zeros_number++;
+                (*columns_arr)[k] = j;
+                (*values)[k].real = (*matrix)[j + (i * columns)].real;
+                (*values)[k++].imag = (*matrix)[j + (i * columns)].imag;
+            }
+        }
+        (*pointerE)[i] = non_zeros_number;
+    }
+}
+
+void extract_csr_compression_double_complex_parameters(MKL_Complex16 **matrix, int rows, int columns, MKL_Complex16 **values, int **columns_arr, int **pointerB, int **pointerE){
+    int non_zeros_number = 0, k = 0;
+    for(int i = 0; i < rows; i++){
+        (*pointerB)[i] = non_zeros_number;
+        for(int j = 0; j < columns; j++){
+            if((*matrix)[j + (i * columns)].real != 0 && (*matrix)[j + (i * columns)].imag != 0){
+                non_zeros_number++;
+                (*columns_arr)[k] = j;
+                (*values)[k].real = (*matrix)[j + (i * columns)].real;
+                (*values)[k++].imag = (*matrix)[j + (i * columns)].imag;
             }
         }
         (*pointerE)[i] = non_zeros_number;
@@ -1368,7 +1446,101 @@ void multiply_sparse_double_general_matrices(int A_rows, int A_columns, int B_ro
 
     if(SHOW == 's'){
         printf("mult info: %d\n", info_mult);
-        show_float_matrix(C, A_rows, B_columns, "C");
+        show_double_matrix(C, A_rows, B_columns, "C");
+    }
+
+    free(C);
+    free(B);
+    free(A);
+    free(pointerE);
+    free(pointerB);
+    free(columns_arr);
+    free(A_csr_values);
+}
+
+void multiply_sparse_complex_float_general_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const MKL_Complex8 *alpha, const MKL_Complex8 *beta) {
+    MKL_Complex8 *A = NULL;
+    create_complex_float_matrix(&A, A_rows, A_columns);
+    
+    MKL_Complex8 *B = NULL;
+    create_complex_float_matrix(&B, B_rows, B_columns);
+
+    MKL_Complex8 *C = NULL;
+    create_complex_float_matrix(&C, A_rows, B_columns);
+    
+    int non_zeros_number = 6;
+    auto_sparse_complex_float_fill(&A, A_rows, A_columns, &non_zeros_number, RANDOM_SEED);
+    
+    MKL_Complex8 *A_csr_values = (MKL_Complex8 *) malloc(non_zeros_number * sizeof(MKL_Complex8));
+    int *columns_arr = (int *) malloc(non_zeros_number * sizeof(int));
+    int *pointerB = (int *) malloc((A_rows) * sizeof(int));
+    int *pointerE = (int *) malloc((A_rows) * sizeof(int));
+    extract_csr_compression_float_complex_parameters(&A, A_rows, A_columns, &A_csr_values, &columns_arr, &pointerB, &pointerE);
+
+    if(SHOW == 's')
+        show_complex_float_matrix(A, A_rows, A_columns, "A");
+
+    auto_complex_float_fill(&B, B_rows, B_columns, RANDOM_SEED + 1);
+    if(SHOW == 's')
+        show_complex_float_matrix(B, B_rows, B_columns, "B");
+
+    sparse_matrix_t A_csr;
+    sparse_status_t status_csr = mkl_sparse_c_create_csr(&A_csr, SPARSE_INDEX_BASE_ZERO, A_rows, A_columns, pointerB, pointerE, columns_arr, A_csr_values);
+
+    struct matrix_descr descr;
+    descr.type = SPARSE_MATRIX_TYPE_GENERAL;
+    sparse_status_t info_mult = mkl_sparse_c_mm(SPARSE_OPERATION_NON_TRANSPOSE, *alpha, A_csr, descr, SPARSE_LAYOUT_ROW_MAJOR, B, B_columns, B_columns, *beta, C, B_columns);
+
+    if(SHOW == 's'){
+        printf("mult info: %d\n", info_mult);
+        show_complex_float_matrix(C, A_rows, B_columns, "C");
+    }
+
+    free(C);
+    free(B);
+    free(A);
+    free(pointerE);
+    free(pointerB);
+    free(columns_arr);
+    free(A_csr_values);
+}
+
+void multiply_sparse_complex_double_general_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const MKL_Complex16 *alpha, const MKL_Complex16 *beta) {
+    MKL_Complex16 *A = NULL;
+    create_complex_double_matrix(&A, A_rows, A_columns);
+    
+    MKL_Complex16 *B = NULL;
+    create_complex_double_matrix(&B, B_rows, B_columns);
+
+    MKL_Complex16 *C = NULL;
+    create_complex_double_matrix(&C, A_rows, B_columns);
+    
+    int non_zeros_number = 6;
+    auto_sparse_complex_double_fill(&A, A_rows, A_columns, &non_zeros_number, RANDOM_SEED);
+    
+    MKL_Complex16 *A_csr_values = (MKL_Complex16 *) malloc(non_zeros_number * sizeof(MKL_Complex16));
+    int *columns_arr = (int *) malloc(non_zeros_number * sizeof(int));
+    int *pointerB = (int *) malloc((A_rows) * sizeof(int));
+    int *pointerE = (int *) malloc((A_rows) * sizeof(int));
+    extract_csr_compression_double_complex_parameters(&A, A_rows, A_columns, &A_csr_values, &columns_arr, &pointerB, &pointerE);
+
+    if(SHOW == 's')
+        show_complex_double_matrix(A, A_rows, A_columns, "A");
+
+    auto_complex_double_fill(&B, B_rows, B_columns, RANDOM_SEED + 1);
+    if(SHOW == 's')
+        show_complex_double_matrix(B, B_rows, B_columns, "B");
+
+    sparse_matrix_t A_csr;
+    sparse_status_t status_csr = mkl_sparse_z_create_csr(&A_csr, SPARSE_INDEX_BASE_ZERO, A_rows, A_columns, pointerB, pointerE, columns_arr, A_csr_values);
+
+    struct matrix_descr descr;
+    descr.type = SPARSE_MATRIX_TYPE_GENERAL;
+    sparse_status_t info_mult = mkl_sparse_z_mm(SPARSE_OPERATION_NON_TRANSPOSE, *alpha, A_csr, descr, SPARSE_LAYOUT_ROW_MAJOR, B, B_columns, B_columns, *beta, C, B_columns);
+
+    if(SHOW == 's'){
+        printf("mult info: %d\n", info_mult);
+        show_complex_double_matrix(C, A_rows, B_columns, "C");
     }
 
     free(C);
