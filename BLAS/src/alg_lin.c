@@ -1264,6 +1264,7 @@ int auto_sparse_complex_float_fill(lapack_complex_float **matrix, int rows, int 
 
     srand(seed);
 
+    *non_zeros_number = 0;
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < columns; j++) {
             if(rand() < 0.7 * RAND_MAX){
@@ -1272,6 +1273,7 @@ int auto_sparse_complex_float_fill(lapack_complex_float **matrix, int rows, int 
             } else{
                 (*matrix)[j + (i*columns)].real = rand()%10;
                 (*matrix)[j + (i*columns)].imag = rand()%10;
+                (*non_zeros_number)++;
             }
         }
     }
@@ -1287,6 +1289,7 @@ int auto_sparse_complex_double_fill(lapack_complex_double **matrix, int rows, in
 
     srand(seed);
 
+    *non_zeros_number = 0;
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < columns; j++) {
             if(rand() < 0.7 * RAND_MAX){
@@ -1295,6 +1298,7 @@ int auto_sparse_complex_double_fill(lapack_complex_double **matrix, int rows, in
             } else{
                 (*matrix)[j + (i*columns)].real = rand()%10;
                 (*matrix)[j + (i*columns)].imag = rand()%10;
+                (*non_zeros_number)++;
             }
         }
     }
@@ -1374,7 +1378,7 @@ void multiply_sparse_float_general_matrices(int A_rows, int A_columns, int B_row
     float *C = NULL;
     create_float_matrix(&C, A_rows, B_columns);
     
-    int non_zeros_number = 6;
+    int non_zeros_number;
     auto_sparse_float_fill(&A, A_rows, A_columns, &non_zeros_number, RANDOM_SEED);
     
     float *A_csr_values = (float *) malloc(non_zeros_number * sizeof(float));
@@ -1421,7 +1425,7 @@ void multiply_sparse_double_general_matrices(int A_rows, int A_columns, int B_ro
     double *C = NULL;
     create_double_matrix(&C, A_rows, B_columns);
     
-    int non_zeros_number = 6;
+    int non_zeros_number;
     auto_sparse_double_fill(&A, A_rows, A_columns, &non_zeros_number, RANDOM_SEED);
     
     double *A_csr_values = (double *) malloc(non_zeros_number * sizeof(double));
@@ -1468,7 +1472,7 @@ void multiply_sparse_complex_float_general_matrices(int A_rows, int A_columns, i
     MKL_Complex8 *C = NULL;
     create_complex_float_matrix(&C, A_rows, B_columns);
     
-    int non_zeros_number = 6;
+    int non_zeros_number;
     auto_sparse_complex_float_fill(&A, A_rows, A_columns, &non_zeros_number, RANDOM_SEED);
     
     MKL_Complex8 *A_csr_values = (MKL_Complex8 *) malloc(non_zeros_number * sizeof(MKL_Complex8));
@@ -1496,6 +1500,7 @@ void multiply_sparse_complex_float_general_matrices(int A_rows, int A_columns, i
         show_complex_float_matrix(C, A_rows, B_columns, "C");
     }
 
+    mkl_sparse_destroy(A_csr);
     free(C);
     free(B);
     free(A);
@@ -1515,7 +1520,7 @@ void multiply_sparse_complex_double_general_matrices(int A_rows, int A_columns, 
     MKL_Complex16 *C = NULL;
     create_complex_double_matrix(&C, A_rows, B_columns);
     
-    int non_zeros_number = 6;
+    int non_zeros_number;
     auto_sparse_complex_double_fill(&A, A_rows, A_columns, &non_zeros_number, RANDOM_SEED);
     
     MKL_Complex16 *A_csr_values = (MKL_Complex16 *) malloc(non_zeros_number * sizeof(MKL_Complex16));
