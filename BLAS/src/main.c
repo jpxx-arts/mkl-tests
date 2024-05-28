@@ -114,7 +114,6 @@ int main(int argc, char const *argv[]){
             }
 
             case 'e': {
-                int non_zeros_number;
                 switch(TYPE){
                     case 's': {
                         const float alpha = 1.0;
@@ -129,27 +128,28 @@ int main(int argc, char const *argv[]){
                         const double alpha = 1.0;
                         const double beta = 0.0;
 
-                        multiply_double_symmetric_matrices(DEFINED_MULTIPLICATION_ARGS, alpha, beta);
+                        multiply_sparse_double_general_matrices(DEFINED_MULTIPLICATION_ARGS, alpha, beta);
+                        
                         break;
                     }
 
-                    case 'c': {
-                        MKL_Complex8 alpha = {1.0, 1.0};
-                        MKL_Complex8 beta = {0.0, 0.0};
+                    // case 'c': {
+                    //     MKL_Complex8 alpha = {1.0, 1.0};
+                    //     MKL_Complex8 beta = {0.0, 0.0};
 
-                        multiply_complex_float_symmetric_matrices(DEFINED_MULTIPLICATION_ARGS, &alpha, &beta);
+                    //     multiply_complex_float_symmetric_matrices(DEFINED_MULTIPLICATION_ARGS, &alpha, &beta);
 
-                        break;
-                    }
+                    //     break;
+                    // }
 
-                    case 'z': {
-                        MKL_Complex16 alpha = {1.0, 1.0};
-                        MKL_Complex16 beta = {0.0, 0.0};
+                    // case 'z': {
+                    //     MKL_Complex16 alpha = {1.0, 1.0};
+                    //     MKL_Complex16 beta = {0.0, 0.0};
 
-                        multiply_complex_double_symmetric_matrices(DEFINED_MULTIPLICATION_ARGS, &alpha, &beta);
+                    //     multiply_complex_double_symmetric_matrices(DEFINED_MULTIPLICATION_ARGS, &alpha, &beta);
 
-                        break;
-                    }
+                    //     break;
+                    // }
                 }
             } 
         }
