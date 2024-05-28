@@ -1015,6 +1015,10 @@ void multiply_float_general_matrices(int A_rows, int A_columns, int B_rows, int 
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, A_rows, B_columns, A_columns, alpha, A, A_columns, B, B_rows, beta, C, B_columns);
     if(SHOW == 's')
         show_float_matrix(C, A_rows, B_columns, "C");
+
+    free(C);
+    free(B);
+    free(A);
 }
 
 void multiply_double_general_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const double alpha, const double beta){
@@ -1038,6 +1042,10 @@ void multiply_double_general_matrices(int A_rows, int A_columns, int B_rows, int
     cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, A_rows, B_columns, A_columns, 1.0, A, A_columns, B, B_rows, 0.0, C, B_columns);
     if(SHOW == 's')
         show_double_matrix(C, A_rows, B_columns, "C");
+
+    free(C);
+    free(B);
+    free(A);
 }
 
 void multiply_complex_float_general_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, MKL_Complex8 *alpha, MKL_Complex8 *beta){
@@ -1062,6 +1070,10 @@ void multiply_complex_float_general_matrices(int A_rows, int A_columns, int B_ro
 
     if(SHOW == 's')
         show_complex_float_matrix(C, A_rows, B_columns, "C");
+
+    free(C);
+    free(B);
+    free(A);
 }
 
 void multiply_complex_double_general_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, MKL_Complex16 *alpha, MKL_Complex16 *beta){
@@ -1086,6 +1098,10 @@ void multiply_complex_double_general_matrices(int A_rows, int A_columns, int B_r
 
     if(SHOW == 's')
         show_complex_double_matrix(C, A_rows, B_columns, "C");
+
+    free(C);
+    free(B);
+    free(A);
 }
 
 void multiply_float_symmetric_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const float alpha, const float beta){
@@ -1109,6 +1125,10 @@ void multiply_float_symmetric_matrices(int A_rows, int A_columns, int B_rows, in
     cblas_ssymm(CblasRowMajor, CblasLeft, CblasUpper, A_rows, B_columns, alpha, A, A_rows, B, B_columns, beta, C, B_columns);
     if(SHOW == 's')
         show_float_matrix(C, A_rows, B_columns, "C");
+
+    free(C);
+    free(B);
+    free(A);
 }
 
 void multiply_double_symmetric_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const double alpha, const double beta){
@@ -1132,6 +1152,10 @@ void multiply_double_symmetric_matrices(int A_rows, int A_columns, int B_rows, i
     cblas_dsymm(CblasRowMajor, CblasLeft, CblasUpper, A_rows, B_columns, alpha, A, A_rows, B, B_columns, beta, C, B_columns);
     if(SHOW == 's')
         show_double_matrix(C, A_rows, B_columns, "C");
+
+    free(C);
+    free(B);
+    free(A);
 }
 
 void multiply_complex_float_symmetric_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, MKL_Complex8 *alpha, MKL_Complex8 *beta){
@@ -1155,6 +1179,10 @@ void multiply_complex_float_symmetric_matrices(int A_rows, int A_columns, int B_
     cblas_csymm(CblasRowMajor, CblasLeft, CblasUpper, A_rows, B_columns, &alpha, A, A_rows, B, B_columns, &beta, C, B_columns);
     if(SHOW == 's')
         show_complex_float_matrix(C, A_rows, B_columns, "C");
+
+    free(C);
+    free(B);
+    free(A);
 }
 
 void multiply_complex_double_symmetric_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, MKL_Complex16 *alpha, MKL_Complex16 *beta){
@@ -1178,6 +1206,10 @@ void multiply_complex_double_symmetric_matrices(int A_rows, int A_columns, int B
     cblas_zsymm(CblasRowMajor, CblasLeft, CblasUpper, A_rows, B_columns, &alpha, A, A_rows, B, B_columns, &beta, C, B_columns);
     if(SHOW == 's')
         show_complex_double_matrix(C, A_rows, B_columns, "C");
+
+    free(C);
+    free(B);
+    free(A);
 }
 
 // Sparse BLAS 
