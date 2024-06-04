@@ -4,3 +4,5 @@ BLAS/bin/out
 BLAS/obj/alg_lin.o
 LAPACK/bin/out
 LAPACK/obj/alg_lin.o
+BLAS/experiments/
+LAPACK/experiments/

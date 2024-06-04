@@ -7,11 +7,11 @@ EXE = out
 LIBFLAGS = -lmkl_rt
 
 all:
-	$(CC) -c $(SRC)/alg_lin.c -o $(OBJ)/alg_lin.o
-	$(CC) $(SRC)/main.c $(OBJ)/alg_lin.o -I $(INCLUDE)/ -o $(BIN)/$(EXE) $(LIBFLAGS)
+	@$(CC) -c $(SRC)/alg_lin.c -o $(OBJ)/alg_lin.o
+	@$(CC) $(SRC)/main.c $(OBJ)/alg_lin.o -I $(INCLUDE)/ -o $(BIN)/$(EXE) $(LIBFLAGS)
 
 clean:
-	rm -rf $(BIN)/*
+	@rm -rf $(BIN)/*
 
 run:
-	$(BIN)/$(EXE) $(ARGS)
+	@$(BIN)/$(EXE) $(ARGS)
