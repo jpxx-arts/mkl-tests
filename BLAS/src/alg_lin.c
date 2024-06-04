@@ -3,33 +3,24 @@
 #include <string.h>
 #include <mkl.h>
 
-int check_args_LAPACK(const char *BIN, int rows, int columns, const char TYPE, const char *MATRIX_TYPE, const char *OPS){
-    if(!strcmp(MATRIX_TYPE, "s")){
-        if(rows != columns){
-            printf("To one symmetric matrix the number of rows and columns must be equal\n");
-            return -2;
-        }
-    }
+int check_args_BLAS(const char *BIN, int A_rows, int A_columns, int B_rows, int B_columns, const char *ROUTINE, const char TYPE, const char *MATRIX_TYPE){
     if(TYPE != 's' && TYPE != 'd' && TYPE != 'c' && TYPE != 'z'){
-        printf("Use: %s <number_rows> <number_columns> <type> <matrix_type> <ops> <seed>\n", BIN);
+        printf("Use: %s <A_rows> <A_columns> <B_rows> <B_columns> <routine> <type> <matrix_type> <show> <seed>\n", BIN);
         printf("Options to <type>: 's', 'd', 'c', 'z'\n");
         return -5;
     }
-    if(strpbrk(MATRIX_TYPE, "gst") == NULL){
-        printf("Use: %s <number_rows> <number_columns> <type> <matrix_type> <ops> <seed>\n", BIN);
-        printf("Options to <matrix_type>: 'g', 's', 't', 'gs', 'gt'\n");
-        return -3;
-    }
-    if(strpbrk(OPS, "fis") == NULL){
-        printf("Use: %s <number_rows> <number_columns> <type> <matrix_type> <ops> <seed>\n", BIN);
-        printf("Options to <ops>: 'f', 'fi', 'fs', 'fis', 'i', 's'. Obs: to types of matrix g and s, the matrix must be factored to realize others operations\n");
-        return -4;
+
+    if(strcmp(ROUTINE, "vv") && strcmp(ROUTINE, "mv") && strcmp(ROUTINE, "mm")){
+        printf("Use: %s <A_rows> <A_columns> <B_rows> <B_columns> <routine> <type> <matrix_type> <show> <seed>\n", BIN);
+        printf("Options to <routine>: 'vv', 'mv', 'mm'\n");
+        return -6;
     }
 
-    return 0;
-}
-
-int check_args_BLAS(const char *BIN, int A_rows, int A_columns, int B_rows, int B_columns, const char *OP, const int RANDOM_SEED){
+    if(strcmp(MATRIX_TYPE, "g") && strcmp(MATRIX_TYPE, "ge") && strcmp(MATRIX_TYPE, "s") && strcmp(MATRIX_TYPE, "ed") && strcmp(MATRIX_TYPE, "eg")){
+        printf("Use: %s <A_rows> <A_columns> <B_rows> <B_columns> <routine> <type> <matrix_type> <show> <seed>\n", BIN);
+        printf("Options to <matrix_type>: 'g', 'ge', 's', 'ed', 'eg'\n");
+        return -7;
+    }
 
     return 0;
 }

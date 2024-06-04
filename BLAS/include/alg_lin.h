@@ -3,8 +3,7 @@
 
 #include <mkl.h>
 
-int check_args_LAPACK(const char *BIN, int rows, int columns, const char TYPE, const char *MATRIX_TYPE, const char *OPS);
-int check_args_BLAS(const char *BIN, int A_rows, int A_columns, int B_rows, int B_columns, const char *OP);
+int check_args_BLAS(const char *BIN, int A_rows, int A_columns, int B_rows, int B_columns, const char *ROUTINE, const char TYPE, const char *MATRIX_TYPE);
 
 // LAPACK
 int create_float_matrix(float **matrix, int rows, int columns);

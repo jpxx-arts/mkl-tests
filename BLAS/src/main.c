@@ -16,10 +16,10 @@ int main(int argc, char const *argv[]){
     }
 
     lapack_int A_rows = atoi(argv[1]), A_columns = atoi(argv[2]), B_rows = atoi(argv[3]), B_columns = atoi(argv[4]);
-    const char *ROUTINE = argv[5], TYPE = argv[6][0], MATRIX_TYPE = argv[7][0], SHOW = argv[8][0];
+    const char *ROUTINE = argv[5], TYPE = argv[6][0], *MATRIX_TYPE = argv[7], SHOW = argv[8][0];
     const int RANDOM_SEED = atoi(argv[9]);
 
-    int err_code = check_args_BLAS(argv[0], A_rows, A_columns, B_rows, B_columns, ROUTINE);
+    int err_code = check_args_BLAS(argv[0], A_rows, A_columns, B_rows, B_columns, ROUTINE, TYPE, MATRIX_TYPE);
     if(err_code)
         return err_code;
 
