@@ -30,128 +30,201 @@ int main(int argc, char const *argv[]){
     
     }
     else if(!strcmp(ROUTINE, "mm")){
-        switch (MATRIX_TYPE){
-            case 'g': {
-                switch(TYPE){
-                    case 's': {
-                        const float alpha = 1.0;
-                        const float beta = 0.0;
+        if(!strcmp(MATRIX_TYPE, "g")){
+            switch(TYPE){
+                case 's': {
+                    const float alpha = 1.0;
+                    const float beta = 0.0;
 
-                        multiply_float_general_matrices(DEFINED_MULTIPLICATION_ARGS, alpha, beta);
+                    multiply_float_general_matrices(DEFINED_MULTIPLICATION_ARGS, alpha, beta);
 
-                        break;
-                    }
-
-                    case 'd': {
-                        const double alpha = 1.0;
-                        const double beta = 0.0;
-
-                        multiply_double_general_matrices(DEFINED_MULTIPLICATION_ARGS, alpha, beta);
-                        break;
-                    }
-
-                    case 'c': {
-                        MKL_Complex8 alpha = {1.0, 1.0};
-                        MKL_Complex8 beta = {0.0, 0.0};
-
-                        multiply_complex_float_general_matrices(DEFINED_MULTIPLICATION_ARGS, &alpha, &beta);
-
-                        break;
-                    }
-
-                    case 'z': {
-                        MKL_Complex16 alpha = {1.0, 1.0};
-                        MKL_Complex16 beta = {0.0, 0.0};
-
-                        multiply_complex_double_general_matrices(DEFINED_MULTIPLICATION_ARGS, &alpha, &beta);
-
-                        break;
-                    }
+                    break;
                 }
 
-                break;
+                case 'd': {
+                    const double alpha = 1.0;
+                    const double beta = 0.0;
+
+                    multiply_double_general_matrices(DEFINED_MULTIPLICATION_ARGS, alpha, beta);
+                    break;
+                }
+
+                case 'c': {
+                    MKL_Complex8 alpha = {1.0, 1.0};
+                    MKL_Complex8 beta = {0.0, 0.0};
+
+                    multiply_complex_float_general_matrices(DEFINED_MULTIPLICATION_ARGS, &alpha, &beta);
+
+                    break;
+                }
+
+                case 'z': {
+                    MKL_Complex16 alpha = {1.0, 1.0};
+                    MKL_Complex16 beta = {0.0, 0.0};
+
+                    multiply_complex_double_general_matrices(DEFINED_MULTIPLICATION_ARGS, &alpha, &beta);
+
+                    break;
+                }
             }
+        }
 
-            case 's': {
-                switch(TYPE){
-                    case 's': {
-                        const float alpha = 1.0;
-                        const float beta = 0.0;
+        else if(!strcmp(MATRIX_TYPE, "ge")){
+            switch(TYPE){
+                case 's': {
+                    const float alpha = 1.0;
+                    const float beta = 0.0;
 
-                        multiply_float_symmetric_matrices(DEFINED_MULTIPLICATION_ARGS, alpha, beta);
+                    multiply_sparse_float_general_matrices(DEFINED_MULTIPLICATION_ARGS, alpha, beta);
 
-                        break;
-                    }
-
-                    case 'd': {
-                        const double alpha = 1.0;
-                        const double beta = 0.0;
-
-                        multiply_double_symmetric_matrices(DEFINED_MULTIPLICATION_ARGS, alpha, beta);
-                        break;
-                    }
-
-                    case 'c': {
-                        MKL_Complex8 alpha = {1.0, 1.0};
-                        MKL_Complex8 beta = {0.0, 0.0};
-
-                        multiply_complex_float_symmetric_matrices(DEFINED_MULTIPLICATION_ARGS, &alpha, &beta);
-
-                        break;
-                    }
-
-                    case 'z': {
-                        MKL_Complex16 alpha = {1.0, 1.0};
-                        MKL_Complex16 beta = {0.0, 0.0};
-
-                        multiply_complex_double_symmetric_matrices(DEFINED_MULTIPLICATION_ARGS, &alpha, &beta);
-
-                        break;
-                    }
+                    break;
                 }
 
-                break;
+                case 'd': {
+                    const double alpha = 1.0;
+                    const double beta = 0.0;
+
+                    multiply_sparse_double_general_matrices(DEFINED_MULTIPLICATION_ARGS, alpha, beta);
+                    break;
+                }
+
+                case 'c': {
+                    MKL_Complex8 alpha = {1.0, 1.0};
+                    MKL_Complex8 beta = {0.0, 0.0};
+
+                    multiply_sparse_complex_float_general_matrices(DEFINED_MULTIPLICATION_ARGS, &alpha, &beta);
+
+                    break;
+                }
+
+                case 'z': {
+                    MKL_Complex16 alpha = {1.0, 1.0};
+                    MKL_Complex16 beta = {0.0, 0.0};
+
+                    multiply_sparse_complex_double_general_matrices(DEFINED_MULTIPLICATION_ARGS, &alpha, &beta);
+
+                    break;
+                }
             }
+        }
 
-            case 'e': {
-                switch(TYPE){
-                    case 's': {
-                        const float alpha = 1.0;
-                        const float beta = 0.0;
+        else if(!strcmp(MATRIX_TYPE, "s")){
+            switch(TYPE){
+                case 's': {
+                    const float alpha = 1.0;
+                    const float beta = 0.0;
 
-                        multiply_sparse_float_general_matrices(DEFINED_MULTIPLICATION_ARGS, alpha, beta);
+                    multiply_float_symmetric_matrices(DEFINED_MULTIPLICATION_ARGS, alpha, beta);
 
-                        break;
-                    }
-
-                    case 'd': {
-                        const double alpha = 1.0;
-                        const double beta = 0.0;
-
-                        multiply_sparse_double_general_matrices(DEFINED_MULTIPLICATION_ARGS, alpha, beta);
-                        
-                        break;
-                    }
-
-                    case 'c': {
-                        MKL_Complex8 alpha = {1.0, 1.0};
-                        MKL_Complex8 beta = {0.0, 0.0};
-
-                        multiply_sparse_complex_float_general_matrices(DEFINED_MULTIPLICATION_ARGS, &alpha, &beta);
-
-                        break;
-                    }
-
-                    case 'z': {
-                        MKL_Complex16 alpha = {1.0, 1.0};
-                        MKL_Complex16 beta = {0.0, 0.0};
-
-                        multiply_sparse_complex_double_general_matrices(DEFINED_MULTIPLICATION_ARGS, &alpha, &beta);
-
-                        break;
-                    }
+                    break;
                 }
-            } 
+
+                case 'd': {
+                    const double alpha = 1.0;
+                    const double beta = 0.0;
+
+                    multiply_double_symmetric_matrices(DEFINED_MULTIPLICATION_ARGS, alpha, beta);
+                    break;
+                }
+
+                case 'c': {
+                    MKL_Complex8 alpha = {1.0, 1.0};
+                    MKL_Complex8 beta = {0.0, 0.0};
+
+                    multiply_complex_float_symmetric_matrices(DEFINED_MULTIPLICATION_ARGS, &alpha, &beta);
+
+                    break;
+                }
+
+                case 'z': {
+                    MKL_Complex16 alpha = {1.0, 1.0};
+                    MKL_Complex16 beta = {0.0, 0.0};
+
+                    multiply_complex_double_symmetric_matrices(DEFINED_MULTIPLICATION_ARGS, &alpha, &beta);
+
+                    break;
+                }
+            }
+        }
+
+        else if(!strcmp(MATRIX_TYPE, "ed")){
+            switch(TYPE){
+                case 's': {
+                    const float alpha = 1.0;
+                    const float beta = 0.0;
+
+                    multiply_sparse_float_matrices(DEFINED_MULTIPLICATION_ARGS, alpha, beta, 'd');
+
+                    break;
+                }
+
+                case 'd': {
+                    const double alpha = 1.0;
+                    const double beta = 0.0;
+
+                    multiply_sparse_double_matrices(DEFINED_MULTIPLICATION_ARGS, alpha, beta, 'd');
+                    
+                    break;
+                }
+
+                case 'c': {
+                    MKL_Complex8 alpha = {1.0, 1.0};
+                    MKL_Complex8 beta = {0.0, 0.0};
+
+                    multiply_sparse_complex_float_matrices(DEFINED_MULTIPLICATION_ARGS, &alpha, &beta, 'd');
+
+                    break;
+                }
+
+                case 'z': {
+                    MKL_Complex16 alpha = {1.0, 1.0};
+                    MKL_Complex16 beta = {0.0, 0.0};
+
+                    multiply_sparse_complex_double_matrices(DEFINED_MULTIPLICATION_ARGS, &alpha, &beta, 'd');
+
+                    break;
+                }
+            }
+        } 
+
+        else if(!strcmp(MATRIX_TYPE, "eg")){
+            switch(TYPE){
+                case 's': {
+                    const float alpha = 1.0;
+                    const float beta = 0.0;
+
+                    multiply_sparse_float_matrices(DEFINED_MULTIPLICATION_ARGS, alpha, beta, 'e');
+
+                    break;
+                }
+
+                case 'd': {
+                    const double alpha = 1.0;
+                    const double beta = 0.0;
+
+                    multiply_sparse_double_matrices(DEFINED_MULTIPLICATION_ARGS, alpha, beta, 'e');
+                    
+                    break;
+                }
+
+                case 'c': {
+                    MKL_Complex8 alpha = {1.0, 1.0};
+                    MKL_Complex8 beta = {0.0, 0.0};
+
+                    multiply_sparse_complex_float_matrices(DEFINED_MULTIPLICATION_ARGS, &alpha, &beta, 'e');
+
+                    break;
+                }
+
+                case 'z': {
+                    MKL_Complex16 alpha = {1.0, 1.0};
+                    MKL_Complex16 beta = {0.0, 0.0};
+
+                    multiply_sparse_complex_double_matrices(DEFINED_MULTIPLICATION_ARGS, &alpha, &beta, 'e');
+
+                    break;
+                }
+            }
         }
     }
 
