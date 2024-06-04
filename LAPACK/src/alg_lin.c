@@ -11,25 +11,20 @@ int check_args_LAPACK(const char *BIN, int rows, int columns, const char TYPE, c
         }
     }
     if(TYPE != 's' && TYPE != 'd' && TYPE != 'c' && TYPE != 'z'){
-        printf("Use: %s <number_rows> <number_columns> <type> <matrix_type> <ops> <seed>\n", BIN);
+        printf("Use: %s <number_rows> <number_columns> <type> <matrix_type> <ops> <seed> <specific_test>\n", BIN);
         printf("Options to <type>: 's', 'd', 'c', 'z'\n");
         return -5;
     }
     if(strpbrk(MATRIX_TYPE, "gst") == NULL){
-        printf("Use: %s <number_rows> <number_columns> <type> <matrix_type> <ops> <seed>\n", BIN);
+        printf("Use: %s <number_rows> <number_columns> <type> <matrix_type> <ops> <seed> <specific_test>\n", BIN);
         printf("Options to <matrix_type>: 'g', 's', 't', 'gs', 'gt'\n");
         return -3;
     }
     if(strpbrk(OPS, "fis") == NULL){
-        printf("Use: %s <number_rows> <number_columns> <type> <matrix_type> <ops> <seed>\n", BIN);
+        printf("Use: %s <number_rows> <number_columns> <type> <matrix_type> <ops> <seed> <specific_test>\n", BIN);
         printf("Options to <ops>: 'f', 'fi', 'fs', 'fis', 'i', 's'. Obs: to types of matrix g and s, the matrix must be factored to realize others operations\n");
         return -4;
     }
-
-    return 0;
-}
-
-int check_args_BLAS(const char *BIN, int A_rows, int A_columns, int B_rows, int B_columns, const char *OP, const int RANDOM_SEED){
 
     return 0;
 }
@@ -991,4 +986,62 @@ int copy_complex_double_matrix(lapack_complex_double **dest, lapack_complex_doub
     }
 
     return 0;
+}
+
+void transpose_float_general_matrix(float **matrix, int rows, int columns){
+    float *trans = NULL;
+    create_float_matrix(&trans, columns, rows);
+
+    for(int i = 0; i < rows; i++){
+        for(int j = 0; j < columns; j++){
+            trans[j + i*rows] = (*matrix)[i + j*columns];
+        }
+    }
+    
+    free(*matrix);
+    *matrix = trans;
+}
+
+void transpose_double_general_matrix(double **matrix, int rows, int columns){
+    double *trans = NULL;
+    create_double_matrix(&trans, columns, rows);
+
+    for(int i = 0; i < rows; i++){
+        for(int j = 0; j < columns; j++){
+            trans[j + i*rows] = (*matrix)[i + j*columns];
+        }
+    }
+    
+    free(*matrix);
+    *matrix = trans;
+}
+
+void transpose_complex_float_general_matrix(lapack_complex_float **matrix, int rows, int columns){
+    lapack_complex_float *trans = NULL;
+    create_complex_float_matrix(&trans, columns, rows);
+
+    for(int i = 0; i < rows; i++){
+        for(int j = 0; j < columns; j++){
+            trans[j + i*columns].real = (*matrix)[i + j*columns].real;
+            trans[j + i*columns].imag = (*matrix)[i + j*columns].imag;
+        }
+    }
+
+    free(*matrix);
+    *matrix = trans;
+}
+
+void transpose_complex_double_general_matrix(lapack_complex_double **matrix, int rows, int columns){
+    lapack_complex_double *trans = NULL;
+    create_complex_double_matrix(&trans, columns, rows);
+
+    for(int i = 0; i < rows; i++){
+        for(int j = 0; j < columns; j++){
+            trans[j + i*columns].real = (*matrix)[i + j*columns].real;
+            trans[j + i*columns].imag = (*matrix)[i + j*columns].imag;
+        }
+    }
+
+    free(*matrix);
+    *matrix = trans;
 }

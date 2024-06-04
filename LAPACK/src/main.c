@@ -8,18 +8,14 @@ int main(int argc, const char *argv[]){
     double start_time, end_time;
     start_time = dsecnd();
 
-    if(argc != 8) {
-        printf("Use: %s <number_rows> <number_columns> <type> <matrix_type> <ops> <show> <seed>\n", argv[0]);
+    if(argc != 9) {
+        printf("Use: %s <number_rows> <number_columns> <type> <matrix_type> <ops> <show> <seed> <specific_test>\n", argv[0]);
         return -1;
     }
 
     // Extraindo argumentos da execução
     lapack_int n_rows = atoi(argv[1]), n_columns = atoi(argv[2]);
-    const char TYPE = argv[3][0];
-    const char *MATRIX_TYPE = argv[4];
-    const char *OPS = argv[5];
-    const char SHOW = argv[6][0];
-    const int RANDOM_SEED = atoi(argv[7]);
+    const char TYPE = argv[3][0], *MATRIX_TYPE = argv[4], *OPS = argv[5], SHOW = argv[6][0], RANDOM_SEED = atoi(argv[7]), SPECIFIC_TEST = argv[8][0];
 
     // Validando argumentos
     int err_code = check_args_LAPACK(argv[0], n_rows, n_columns, TYPE, MATRIX_TYPE, OPS);
@@ -42,9 +38,15 @@ int main(int argc, const char *argv[]){
 
                 // Preenchimento de uma matriz geral
                 auto_float_fill(&A, n_rows, n_columns, RANDOM_SEED);
-                
+
                 if(SHOW == 's')
                     show_float_matrix(A, n_rows, n_columns, "A");
+
+                if(SPECIFIC_TEST == 't'){
+                    transpose_float_general_matrix(&A, n_rows, n_columns);
+                    if(SHOW == 's')
+                        show_float_matrix(A, n_rows, n_columns, "A tranposed");
+                }
 
                 // Fluxo de operações com a matriz geral
                 if(strpbrk(OPS, "f")){
@@ -96,7 +98,7 @@ int main(int argc, const char *argv[]){
                     // RHS
                     float *b = NULL;
                     create_float_matrix(&b, n_rows, 1);
-                    auto_float_fill(&b, n_rows, 1, RANDOM_SEED);
+                    auto_float_fill(&b, n_rows, 1, RANDOM_SEED + 1);
                     
                     if(SHOW == 's')
                         show_float_matrix(b, n_rows, 1, "b");
@@ -106,11 +108,23 @@ int main(int argc, const char *argv[]){
                     create_float_matrix(&x, n_rows, 1);
                     copy_float_matrix(&x, &b, n_rows);
 
-                    lapack_int info_solved_system = LAPACKE_sgetrs(LAPACK_ROW_MAJOR, 'N', n_rows, 1, A, n_columns, ipiv, x, 1);
+                    lapack_int info_solved_system;
+                    switch(SPECIFIC_TEST){
+                        case 'T': {
+                            info_solved_system = LAPACKE_sgetrs(LAPACK_ROW_MAJOR, 'T', n_rows, 1, A, n_columns, ipiv, x, 1);
+
+                            break;
+                        }
+                        default: {
+                            info_solved_system = LAPACKE_sgetrs(LAPACK_ROW_MAJOR, 'N', n_rows, 1, A, n_columns, ipiv, x, 1);
+                        }
+                    }
                     
                     if(SHOW == 's'){
                         printf("solved system info: %d\n", info_solved_system);
                         show_float_matrix(x, n_rows, 1, "x");
+                        if(SPECIFIC_TEST == 't' || SPECIFIC_TEST == 'T')
+                            printf("*A was transposed*\n");
                     }
 
                     free(x);
@@ -180,7 +194,7 @@ int main(int argc, const char *argv[]){
                     // RHS
                     float *b = NULL;
                     create_float_matrix(&b, n, 1);
-                    auto_float_fill(&b, n, 1, RANDOM_SEED);
+                    auto_float_fill(&b, n, 1, RANDOM_SEED + 1);
 
                     if(SHOW == 's')
                         show_float_matrix(b, n, 1, "b");
@@ -240,7 +254,7 @@ int main(int argc, const char *argv[]){
                     // RHS
                     float *b = NULL;
                     create_float_matrix(&b, n, 1);
-                    auto_float_fill(&b, n, 1, RANDOM_SEED);
+                    auto_float_fill(&b, n, 1, RANDOM_SEED + 1);
 
                     if(SHOW == 's')
                         show_float_matrix(b, n, 1, "b");
@@ -278,6 +292,13 @@ int main(int argc, const char *argv[]){
                 
                 if(SHOW == 's')
                     show_double_matrix(A, n_rows, n_columns, "A");
+
+                if(SPECIFIC_TEST == 't'){
+                    transpose_double_general_matrix(&A, n_rows, n_columns);
+                    if(SHOW == 's'){
+                        show_double_matrix(A, n_rows, n_columns, "A tranposed");
+                    }
+                }
 
                 // Fluxo de operações com a matriz geral
                 if(strpbrk(OPS, "f")){
@@ -329,7 +350,7 @@ int main(int argc, const char *argv[]){
                     // RHS
                     double *b = NULL;
                     create_double_matrix(&b, n_rows, 1);
-                    auto_double_fill(&b, n_rows, 1, RANDOM_SEED);
+                    auto_double_fill(&b, n_rows, 1, RANDOM_SEED + 1);
 
                     if(SHOW == 's')
                         show_double_matrix(b, n_rows, 1, "b");
@@ -339,11 +360,23 @@ int main(int argc, const char *argv[]){
                     create_double_matrix(&x, n_rows, 1);
                     copy_double_matrix(&x, &b, n_rows);
 
-                    lapack_int info_solved_system = LAPACKE_dgetrs(LAPACK_ROW_MAJOR, 'N', n_rows, 1, A, n_columns, ipiv, x, 1);
+                    lapack_int info_solved_system;
+                    switch(SPECIFIC_TEST){
+                        case 'T': {
+                            info_solved_system = LAPACKE_dgetrs(LAPACK_ROW_MAJOR, 'T', n_rows, 1, A, n_columns, ipiv, x, 1);
+
+                            break;
+                        }
+                        default: {
+                            info_solved_system = LAPACKE_dgetrs(LAPACK_ROW_MAJOR, 'N', n_rows, 1, A, n_columns, ipiv, x, 1);
+                        }
+                    }
                     
                     if(SHOW == 's'){
                         printf("solved system info: %d\n", info_solved_system);
                         show_double_matrix(x, n_rows, 1, "x");
+                        if(SPECIFIC_TEST == 't' || SPECIFIC_TEST == 'T')
+                            printf("*A was transposed*\n");
                     }
 
                     free(x);
@@ -413,7 +446,7 @@ int main(int argc, const char *argv[]){
                     // RHS
                     double *b = NULL;
                     create_double_matrix(&b, n, 1);
-                    auto_double_fill(&b, n, 1, RANDOM_SEED);
+                    auto_double_fill(&b, n, 1, RANDOM_SEED + 1);
 
                     if(SHOW == 's')
                         show_double_matrix(b, n, 1, "b");
@@ -475,7 +508,7 @@ int main(int argc, const char *argv[]){
                     // RHS
                     double *b = NULL;
                     create_double_matrix(&b, n, 1);
-                    auto_double_fill(&b, n, 1, RANDOM_SEED);
+                    auto_double_fill(&b, n, 1, RANDOM_SEED + 1);
 
                     if(SHOW == 's')
                         show_double_matrix(b, n, 1, "b");
@@ -564,7 +597,7 @@ int main(int argc, const char *argv[]){
                     // RHS
                     lapack_complex_float *b = NULL;
                     create_complex_float_matrix(&b, n_rows, 1);
-                    auto_complex_float_fill(&b, n_rows, 1, RANDOM_SEED);
+                    auto_complex_float_fill(&b, n_rows, 1, RANDOM_SEED + 1);
                     
                     if(SHOW == 's')
                         show_complex_float_matrix(b, n_rows, 1, "b");
@@ -648,7 +681,7 @@ int main(int argc, const char *argv[]){
                     // RHS
                     lapack_complex_float *b = NULL;
                     create_complex_float_matrix(&b, n, 1);
-                    auto_complex_float_fill(&b, n, 1, RANDOM_SEED);
+                    auto_complex_float_fill(&b, n, 1, RANDOM_SEED + 1);
 
                     if(SHOW == 's')
                         show_complex_float_matrix(b, n, 1, "b");
@@ -708,7 +741,7 @@ int main(int argc, const char *argv[]){
                     // RHS
                     lapack_complex_float *b = NULL;
                     create_complex_float_matrix(&b, n, 1);
-                    auto_complex_float_fill(&b, n, 1, RANDOM_SEED);
+                    auto_complex_float_fill(&b, n, 1, RANDOM_SEED + 1);
 
                     if(SHOW == 's')
                         show_complex_float_matrix(b, n, 1, "b");
@@ -797,7 +830,7 @@ int main(int argc, const char *argv[]){
                     // RHS
                     lapack_complex_double *b = NULL;
                     create_complex_double_matrix(&b, n_rows, 1);
-                    auto_complex_double_fill(&b, n_rows, 1, RANDOM_SEED);
+                    auto_complex_double_fill(&b, n_rows, 1, RANDOM_SEED + 1);
                     
                     if(SHOW == 's')
                         show_complex_double_matrix(b, n_rows, 1, "b");
@@ -881,7 +914,7 @@ int main(int argc, const char *argv[]){
                     // RHS
                     lapack_complex_double *b = NULL;
                     create_complex_double_matrix(&b, n, 1);
-                    auto_complex_double_fill(&b, n, 1, RANDOM_SEED);
+                    auto_complex_double_fill(&b, n, 1, RANDOM_SEED + 1);
 
                     if(SHOW == 's')
                         show_complex_double_matrix(b, n, 1, "b");
@@ -941,7 +974,7 @@ int main(int argc, const char *argv[]){
                     // RHS
                     lapack_complex_double *b = NULL;
                     create_complex_double_matrix(&b, n, 1);
-                    auto_complex_double_fill(&b, n, 1, RANDOM_SEED);
+                    auto_complex_double_fill(&b, n, 1, RANDOM_SEED + 1);
 
                     if(SHOW == 's')
                         show_complex_double_matrix(b, n, 1, "b");
