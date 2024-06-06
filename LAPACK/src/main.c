@@ -45,7 +45,7 @@ int main(int argc, const char *argv[]){
                 if(SPECIFIC_TEST == 't'){
                     transpose_float_general_matrix(&A, n_rows, n_columns);
                     if(SHOW == 's')
-                        show_float_matrix(A, n_rows, n_columns, "A tranposed");
+                        show_float_matrix(A, n_columns, n_rows, "A transposed");
                 }
 
                 // Fluxo de operações com a matriz geral
@@ -296,7 +296,7 @@ int main(int argc, const char *argv[]){
                 if(SPECIFIC_TEST == 't'){
                     transpose_double_general_matrix(&A, n_rows, n_columns);
                     if(SHOW == 's'){
-                        show_double_matrix(A, n_rows, n_columns, "A tranposed");
+                        show_double_matrix(A, n_columns, n_rows, "A transposed");
                     }
                 }
 
