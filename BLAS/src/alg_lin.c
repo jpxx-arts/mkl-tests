@@ -1529,6 +1529,7 @@ void multiply_sparse_float_matrices(int A_rows, int A_columns, int B_rows, int B
     free(pointerB);
     free(columns_arr);
     free(A_csr_values);
+    mkl_sparse_destroy(A_csr);
 }
 
 void multiply_sparse_double_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const double alpha, const double beta){
@@ -1576,6 +1577,7 @@ void multiply_sparse_double_matrices(int A_rows, int A_columns, int B_rows, int 
     free(pointerB);
     free(columns_arr);
     free(A_csr_values);
+    mkl_sparse_destroy(A_csr);
 }
 
 void multiply_sparse_complex_float_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const MKL_Complex8 *alpha, const MKL_Complex8 *beta) {
@@ -1624,6 +1626,7 @@ void multiply_sparse_complex_float_matrices(int A_rows, int A_columns, int B_row
     free(pointerB);
     free(columns_arr);
     free(A_csr_values);
+    mkl_sparse_destroy(A_csr);
 }
 
 void multiply_sparse_complex_double_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const MKL_Complex16 *alpha, const MKL_Complex16 *beta) {
@@ -1671,6 +1674,7 @@ void multiply_sparse_complex_double_matrices(int A_rows, int A_columns, int B_ro
     free(pointerB);
     free(columns_arr);
     free(A_csr_values);
+    mkl_sparse_destroy(A_csr);
 }
 
 void auto_compressed_sparse_float_fill(float *values, int rows, int columns, int *columns_arr, int *pointerB, int *pointerE, int *non_zeros_number, int estimated_size_of_non_zeros_number, int RANDOM_SEED) {
@@ -1814,6 +1818,7 @@ void multiply_compressed_sparse_float_matrices(int A_rows, int A_columns, int B_
     free(pointerB);
     free(columns_arr);
     free(A_csr_values);
+    mkl_sparse_destroy(A_csr);
 }
 
 void multiply_compressed_sparse_double_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const double alpha, const double beta){
@@ -1857,6 +1862,7 @@ void multiply_compressed_sparse_double_matrices(int A_rows, int A_columns, int B
     free(pointerB);
     free(columns_arr);
     free(A_csr_values);
+    mkl_sparse_destroy(A_csr);
 }
 
 void multiply_compressed_sparse_complex_float_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const MKL_Complex8 *alpha, const MKL_Complex8 *beta){
@@ -1900,6 +1906,7 @@ void multiply_compressed_sparse_complex_float_matrices(int A_rows, int A_columns
     free(pointerB);
     free(columns_arr);
     free(A_csr_values);
+    mkl_sparse_destroy(A_csr);
 }
 
 void multiply_compressed_sparse_complex_double_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const MKL_Complex16 *alpha, const MKL_Complex16 *beta){
@@ -1943,4 +1950,5 @@ void multiply_compressed_sparse_complex_double_matrices(int A_rows, int A_column
     free(pointerB);
     free(columns_arr);
     free(A_csr_values);
+    mkl_sparse_destroy(A_csr);
 }
