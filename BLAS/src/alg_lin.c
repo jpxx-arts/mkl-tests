@@ -3,6 +3,8 @@
 #include <string.h>
 #include <mkl.h>
 
+#define ZEROS_PERCENT 0.7
+
 int check_args_BLAS(const char *BIN, int A_rows, int A_columns, int B_rows, int B_columns, const char *ROUTINE, const char TYPE, const char *MATRIX_TYPE){
     if(TYPE != 's' && TYPE != 'd' && TYPE != 'c' && TYPE != 'z'){
         printf("Use: %s <A_rows> <A_columns> <B_rows> <B_columns> <routine> <type> <matrix_type> <show> <seed>\n", BIN);
@@ -16,9 +18,9 @@ int check_args_BLAS(const char *BIN, int A_rows, int A_columns, int B_rows, int 
         return -6;
     }
 
-    if(strcmp(MATRIX_TYPE, "g") && strcmp(MATRIX_TYPE, "ge") && strcmp(MATRIX_TYPE, "s") && strcmp(MATRIX_TYPE, "ed") && strcmp(MATRIX_TYPE, "eg")){
+    if(strcmp(MATRIX_TYPE, "g") && strcmp(MATRIX_TYPE, "ge") && strcmp(MATRIX_TYPE, "s") && strcmp(MATRIX_TYPE, "ed") && strcmp(MATRIX_TYPE, "ec")){
         printf("Use: %s <A_rows> <A_columns> <B_rows> <B_columns> <routine> <type> <matrix_type> <show> <seed>\n", BIN);
-        printf("Options to <matrix_type>: 'g', 'ge', 's', 'ed', 'eg'\n");
+        printf("Options to <matrix_type>: 'g', 'ge', 's', 'ed', 'ec'\n");
         return -7;
     }
 
@@ -1213,7 +1215,7 @@ int auto_sparse_float_fill(float **matrix, int rows, int columns, int *non_zeros
 
     for(int i = 0; i < rows; i++){
         for(int j = 0; j < columns; j++){
-            if(rand() < 0.7 * RAND_MAX){
+            if(rand() < ZEROS_PERCENT * RAND_MAX){
                 (*matrix)[j + (i * columns)] = 0;
             } else {
                 (*matrix)[j + (i * columns)] = rand() % 10;
@@ -1235,7 +1237,7 @@ int auto_sparse_double_fill(double **matrix, int rows, int columns, int *non_zer
 
     for(int i = 0; i < rows; i++){
         for(int j = 0; j < columns; j++){
-            if(rand() < 0.7 * RAND_MAX){
+            if(rand() < ZEROS_PERCENT * RAND_MAX){
                 (*matrix)[j + (i * columns)] = 0;
             } else {
                 (*matrix)[j + (i * columns)] = rand() % 10;
@@ -1258,7 +1260,7 @@ int auto_sparse_complex_float_fill(lapack_complex_float **matrix, int rows, int 
     *non_zeros_number = 0;
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < columns; j++) {
-            if(rand() < 0.7 * RAND_MAX){
+            if(rand() < ZEROS_PERCENT * RAND_MAX){
                 (*matrix)[j + (i*columns)].real = 0;
                 (*matrix)[j + (i*columns)].imag = 0;
             } else{
@@ -1283,7 +1285,7 @@ int auto_sparse_complex_double_fill(lapack_complex_double **matrix, int rows, in
     *non_zeros_number = 0;
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < columns; j++) {
-            if(rand() < 0.7 * RAND_MAX){
+            if(rand() < ZEROS_PERCENT * RAND_MAX){
                 (*matrix)[j + (i*columns)].real = 0;
                 (*matrix)[j + (i*columns)].imag = 0;
             } else{
@@ -1379,7 +1381,12 @@ void multiply_sparse_float_general_matrices(int A_rows, int A_columns, int B_row
     if(SHOW == 's')
         show_float_matrix(B, B_rows, B_columns, "B");
 
+    double start_time, end_time;
+    start_time = dsecnd();
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, A_rows, B_columns, A_columns, alpha, A, A_columns, B, B_rows, beta, C, B_columns);
+    end_time = dsecnd();
+    printf("%f s\n", end_time - start_time);
+    
     if(SHOW == 's')
         show_float_matrix(C, A_rows, B_columns, "C");
 
@@ -1660,6 +1667,79 @@ void multiply_sparse_complex_double_matrices(int A_rows, int A_columns, int B_ro
     free(C);
     free(B);
     free(A);
+    free(pointerE);
+    free(pointerB);
+    free(columns_arr);
+    free(A_csr_values);
+}
+
+void auto_compressed_sparse_float_fill(float *values, int rows, int columns, int *columns_arr, int *pointerB, int *pointerE, int *non_zeros_number, int estimated_size_of_non_zeros_number, int RANDOM_SEED) {
+    *non_zeros_number = 0;
+    for(int i = 0; i < rows; i++){
+        pointerB[i] = *non_zeros_number;
+        for(int j = 0; j < columns; j++){
+            if(rand() > ZEROS_PERCENT * RAND_MAX){
+                if(*non_zeros_number >= estimated_size_of_non_zeros_number){
+                    estimated_size_of_non_zeros_number *= 2;
+                    values = (float *) realloc(values, estimated_size_of_non_zeros_number * sizeof(float));
+                    columns_arr = (int *) realloc(columns_arr, estimated_size_of_non_zeros_number * sizeof(int));
+
+                    if(values == NULL || columns_arr == NULL){
+                        printf("Allocation error: realloc\n");
+                        return;
+                    }
+                }
+                values[*non_zeros_number] = rand()%10;
+                columns_arr[(*non_zeros_number)++] = j;
+            }
+        }
+        pointerE[i] = *non_zeros_number;
+    }
+}
+
+void multiply_compressed_sparse_float_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const float alpha, const float beta){
+    int estimated_size_of_non_zeros_number = A_rows*A_columns/2;
+    float *A_csr_values = (float *) malloc(estimated_size_of_non_zeros_number * sizeof(float));
+    int *columns_arr = (int *) malloc(estimated_size_of_non_zeros_number * sizeof(int));
+    int *pointerB = (int *) malloc((A_rows) * sizeof(int));
+    int *pointerE = (int *) malloc((A_rows) * sizeof(int));
+    
+    float *B = NULL;
+    create_float_matrix(&B, B_rows, B_columns);
+
+    float *C = NULL;
+    create_float_matrix(&C, A_rows, B_columns);
+    
+    int non_zeros_number;
+    auto_compressed_sparse_float_fill(A_csr_values, A_rows, A_columns, columns_arr, pointerB, pointerE, &non_zeros_number, estimated_size_of_non_zeros_number, RANDOM_SEED);
+
+    if(SHOW == 's')
+        show_float_matrix(A_csr_values, 1, non_zeros_number, "A compressed");
+
+    auto_float_fill(&B, B_rows, B_columns, RANDOM_SEED + 1);
+    if(SHOW == 's')
+        show_float_matrix(B, B_rows, B_columns, "B");
+
+    sparse_matrix_t A_csr;
+    sparse_status_t status_csr = mkl_sparse_s_create_csr(&A_csr, SPARSE_INDEX_BASE_ZERO, A_rows, A_columns, pointerB, pointerE, columns_arr, A_csr_values);
+
+    struct matrix_descr descr;
+    descr.type = SPARSE_MATRIX_TYPE_GENERAL;
+
+    double start_time, end_time;
+    start_time = dsecnd();
+    sparse_status_t info_mult = mkl_sparse_s_mm(SPARSE_OPERATION_NON_TRANSPOSE, alpha, A_csr, descr, SPARSE_LAYOUT_ROW_MAJOR, B, B_columns, B_columns, beta, C, B_columns);
+    end_time = dsecnd();
+
+    printf("%f s\n", end_time - start_time);
+
+    if(SHOW == 's'){
+        printf("mult info: %d\n", info_mult);
+        show_float_matrix(C, A_rows, B_columns, "C");
+    }
+
+    free(C);
+    free(B);
     free(pointerE);
     free(pointerB);
     free(columns_arr);
