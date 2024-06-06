@@ -97,9 +97,9 @@ int symmetric_float_fill(float **matrix, int rows, int columns, int seed){
     for(int i = 0; i < rows; i++){
         for(int j = 0; j < columns; j++){    
             if(j >= i){
-                (*matrix)[i*rows + j] = rand()%10;
+                (*matrix)[i*columns + j] = rand()%10;
             }else{
-                (*matrix)[i*rows + j] = (*matrix)[j*rows + i];
+                (*matrix)[i*columns + j] = (*matrix)[j*columns + i];
             }
         }
     }
@@ -118,9 +118,9 @@ int triangular_float_fill(float **matrix, int rows, int columns, int seed){
     for(int i = 0; i < rows; i++){
         for(int j = 0; j < columns; j++){    
             if(j >= i){
-                (*matrix)[i*rows + j] = rand()%10;
+                (*matrix)[i*columns + j] = rand()%10;
             }else{
-                (*matrix)[i*rows + j] = 0;
+                (*matrix)[i*columns + j] = 0;
             }
         }
     }
@@ -341,9 +341,9 @@ int symmetric_double_fill(double **matrix, int rows, int columns, int seed){
     for(int i = 0; i < rows; i++){
         for(int j = 0; j < columns; j++){    
             if(j >= i){
-                (*matrix)[i*rows + j] = rand()%10;
+                (*matrix)[i*columns + j] = rand()%10;
             }else{
-                (*matrix)[i*rows + j] = (*matrix)[j*rows + i];
+                (*matrix)[i*columns + j] = (*matrix)[j*columns + i];
             }
         }
     }
@@ -362,9 +362,9 @@ int triangular_double_fill(double **matrix, int rows, int columns, int seed){
     for(int i = 0; i < rows; i++){
         for(int j = 0; j < columns; j++){    
             if(j >= i){
-                (*matrix)[i*rows + j] = rand()%10;
+                (*matrix)[i*columns + j] = rand()%10;
             }else{
-                (*matrix)[i*rows + j] = 0;
+                (*matrix)[i*columns + j] = 0;
             }
         }
     }
@@ -572,8 +572,8 @@ int symmetric_complex_float_fill(lapack_complex_float **matrix, int rows, int co
                 (*matrix)[j + (i*columns)].real = rand()%10;
                 (*matrix)[j + (i*columns)].imag = rand()%10;
             }else{
-                (*matrix)[i*rows + j].real = (*matrix)[j*rows + i].real;
-                (*matrix)[i*rows + j].imag = (*matrix)[j*rows + i].imag;
+                (*matrix)[i*columns + j].real = (*matrix)[j*columns + i].real;
+                (*matrix)[i*columns + j].imag = (*matrix)[j*columns + i].imag;
             }
         }
     }
@@ -592,11 +592,11 @@ int triangular_complex_float_fill(lapack_complex_float **matrix, int rows, int c
     for(int i = 0; i < rows; i++){
         for(int j = 0; j < columns; j++){    
             if(j >= i){
-                (*matrix)[i*rows + j].real = rand()%10;
-                (*matrix)[i*rows + j].imag = rand()%10;
+                (*matrix)[i*columns + j].real = rand()%10;
+                (*matrix)[i*columns + j].imag = rand()%10;
             }else{
-                (*matrix)[i*rows + j].real = 0;
-                (*matrix)[i*rows + j].imag = 0;
+                (*matrix)[i*columns + j].real = 0;
+                (*matrix)[i*columns + j].imag = 0;
             }
         }
     }
@@ -811,8 +811,8 @@ int symmetric_complex_double_fill(lapack_complex_double **matrix, int rows, int 
                 (*matrix)[j + (i*columns)].real = rand()%10;
                 (*matrix)[j + (i*columns)].imag = rand()%10;
             }else{
-                (*matrix)[i*rows + j].real = (*matrix)[j*rows + i].real;
-                (*matrix)[i*rows + j].imag = (*matrix)[j*rows + i].imag;
+                (*matrix)[i*columns + j].real = (*matrix)[j*columns + i].real;
+                (*matrix)[i*columns + j].imag = (*matrix)[j*columns + i].imag;
             }
         }
     }
@@ -831,11 +831,11 @@ int triangular_complex_double_fill(lapack_complex_double **matrix, int rows, int
     for(int i = 0; i < rows; i++){
         for(int j = 0; j < columns; j++){    
             if(j >= i){
-                (*matrix)[i*rows + j].real = rand()%10;
-                (*matrix)[i*rows + j].imag = rand()%10;
+                (*matrix)[i*columns + j].real = rand()%10;
+                (*matrix)[i*columns + j].imag = rand()%10;
             }else{
-                (*matrix)[i*rows + j].real = 0;
-                (*matrix)[i*rows + j].imag = 0;
+                (*matrix)[i*columns + j].real = 0;
+                (*matrix)[i*columns + j].imag = 0;
             }
         }
     }
@@ -994,7 +994,7 @@ void transpose_float_general_matrix(float **matrix, int rows, int columns){
 
     for(int i = 0; i < rows; i++){
         for(int j = 0; j < columns; j++){
-            trans[j + i*rows] = (*matrix)[i + j*columns];
+            trans[i + j*rows] = (*matrix)[i*columns + j];
         }
     }
     
@@ -1008,7 +1008,7 @@ void transpose_double_general_matrix(double **matrix, int rows, int columns){
 
     for(int i = 0; i < rows; i++){
         for(int j = 0; j < columns; j++){
-            trans[j + i*rows] = (*matrix)[i + j*columns];
+            trans[i + j*rows] = (*matrix)[i*columns + j];
         }
     }
     
