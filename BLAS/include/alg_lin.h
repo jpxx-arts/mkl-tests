@@ -70,8 +70,8 @@ int auto_sparse_complex_double_fill(lapack_complex_double **matrix, int rows, in
 
 void extract_csr_compression_float_parameters(float *matrix, int rows, int columns, float **values, int **columns_arr, int **pointerB, int **pointerE);
 void extract_csr_compression_double_parameters(double *matrix, int rows, int columns, double **values, int **columns_arr, int **pointerB, int **pointerE);
-void extract_csr_compression_float_complex_parameters(MKL_Complex8 **matrix, int rows, int columns, MKL_Complex8 **values, int **columns_arr, int **pointerB, int **pointerE);
-void extract_csr_compression_double_complex_parameters(MKL_Complex16 **matrix, int rows, int columns, MKL_Complex16 **values, int **columns_arr, int **pointerB, int **pointerE);
+void extract_csr_compression_complex_float_parameters(MKL_Complex8 **matrix, int rows, int columns, MKL_Complex8 **values, int **columns_arr, int **pointerB, int **pointerE);
+void extract_csr_compression_complex_double_parameters(MKL_Complex16 **matrix, int rows, int columns, MKL_Complex16 **values, int **columns_arr, int **pointerB, int **pointerE);
 
 void multiply_sparse_float_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const float alpha, const float beta);
 void multiply_sparse_double_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const double alpha, const double beta);
@@ -84,6 +84,13 @@ void multiply_sparse_complex_float_general_matrices(int A_rows, int A_columns, i
 void multiply_sparse_complex_double_general_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, MKL_Complex16 *alpha, MKL_Complex16 *beta);
 
 void auto_compressed_sparse_float_fill(float *values, int rows, int columns, int *columns_arr, int *pointerB, int *pointerE, int *non_zeros_number, int estimated_size_of_non_zeros_number, int RANDOM_SEED);
+void auto_compressed_sparse_double_fill(double *values, int rows, int columns, int *columns_arr, int *pointerB, int *pointerE, int *non_zeros_number, int estimated_size_of_non_zeros_number, int RANDOM_SEED);
+void auto_compressed_sparse_complex_float_fill(MKL_Complex8 *values, int rows, int columns, int *columns_arr, int *pointerB, int *pointerE, int *non_zeros_number, int estimated_size_of_non_zeros_number, int RANDOM_SEED);
+void auto_compressed_sparse_complex_double_fill(MKL_Complex16 *values, int rows, int columns, int *columns_arr, int *pointerB, int *pointerE, int *non_zeros_number, int estimated_size_of_non_zeros_number, int RANDOM_SEED);
+
 void multiply_compressed_sparse_float_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const float alpha, const float beta);
+void multiply_compressed_sparse_double_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const double alpha, const double beta);
+void multiply_compressed_sparse_complex_float_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const MKL_Complex8 *alpha, const MKL_Complex8 *beta);
+void multiply_compressed_sparse_complex_double_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const MKL_Complex16 *alpha, const MKL_Complex16 *beta);
 
 #endif

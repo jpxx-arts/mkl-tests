@@ -7,8 +7,8 @@
 #define DEFINED_MULTIPLICATION_ARGS A_rows, A_columns, B_rows, B_columns, RANDOM_SEED, SHOW
 
 int main(int argc, char const *argv[]){
-    // double start_time, end_time;
-    // start_time = dsecnd();
+    double start_time, end_time;
+    start_time = dsecnd();
 
     if(argc != 10){
         printf("Use: %s <A_rows> <A_columns> <B_rows> <B_columns> <routine> <type> <matrix_type> <show> <seed>\n", argv[0]);
@@ -202,7 +202,7 @@ int main(int argc, char const *argv[]){
                     const double alpha = 1.0;
                     const double beta = 0.0;
 
-                    multiply_sparse_double_matrices(DEFINED_MULTIPLICATION_ARGS, alpha, beta);
+                    multiply_compressed_sparse_double_matrices(DEFINED_MULTIPLICATION_ARGS, alpha, beta);
                     
                     break;
                 }
@@ -211,7 +211,7 @@ int main(int argc, char const *argv[]){
                     MKL_Complex8 alpha = {1.0, 1.0};
                     MKL_Complex8 beta = {0.0, 0.0};
 
-                    multiply_sparse_complex_float_matrices(DEFINED_MULTIPLICATION_ARGS, &alpha, &beta);
+                    multiply_compressed_sparse_complex_float_matrices(DEFINED_MULTIPLICATION_ARGS, &alpha, &beta);
 
                     break;
                 }
@@ -220,7 +220,7 @@ int main(int argc, char const *argv[]){
                     MKL_Complex16 alpha = {1.0, 1.0};
                     MKL_Complex16 beta = {0.0, 0.0};
 
-                    multiply_sparse_complex_double_matrices(DEFINED_MULTIPLICATION_ARGS, &alpha, &beta);
+                    multiply_compressed_sparse_complex_double_matrices(DEFINED_MULTIPLICATION_ARGS, &alpha, &beta);
 
                     break;
                 }
@@ -228,8 +228,8 @@ int main(int argc, char const *argv[]){
         }
     }
 
-    // end_time = dsecnd();
-    // printf("%f s\n", end_time - start_time);
+    end_time = dsecnd();
+    printf("%f s\n", end_time - start_time);
 
     return 0;
 }

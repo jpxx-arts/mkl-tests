@@ -1329,7 +1329,7 @@ void extract_csr_compression_double_parameters(double *matrix, int rows, int col
     }
 }
 
-void extract_csr_compression_float_complex_parameters(MKL_Complex8 **matrix, int rows, int columns, MKL_Complex8 **values, int **columns_arr, int **pointerB, int **pointerE){
+void extract_csr_compression_complex_float_parameters(MKL_Complex8 **matrix, int rows, int columns, MKL_Complex8 **values, int **columns_arr, int **pointerB, int **pointerE){
     int non_zeros_number = 0, k = 0;
     for(int i = 0; i < rows; i++){
         (*pointerB)[i] = non_zeros_number;
@@ -1345,7 +1345,7 @@ void extract_csr_compression_float_complex_parameters(MKL_Complex8 **matrix, int
     }
 }
 
-void extract_csr_compression_double_complex_parameters(MKL_Complex16 **matrix, int rows, int columns, MKL_Complex16 **values, int **columns_arr, int **pointerB, int **pointerE){
+void extract_csr_compression_complex_double_parameters(MKL_Complex16 **matrix, int rows, int columns, MKL_Complex16 **values, int **columns_arr, int **pointerB, int **pointerE){
     int non_zeros_number = 0, k = 0;
     for(int i = 0; i < rows; i++){
         (*pointerB)[i] = non_zeros_number;
@@ -1381,7 +1381,7 @@ void multiply_sparse_float_general_matrices(int A_rows, int A_columns, int B_row
     if(SHOW == 's')
         show_float_matrix(B, B_rows, B_columns, "B");
 
-    double start_time, end_time;
+    double start_time, end_time; // here
     start_time = dsecnd();
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, A_rows, B_columns, A_columns, alpha, A, A_columns, B, B_rows, beta, C, B_columns);
     end_time = dsecnd();
@@ -1531,7 +1531,7 @@ void multiply_sparse_float_matrices(int A_rows, int A_columns, int B_rows, int B
     free(A_csr_values);
 }
 
-void multiply_sparse_double_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const double alpha, const double beta, const char isCompressed){
+void multiply_sparse_double_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const double alpha, const double beta){
     double *A = NULL;
     create_double_matrix(&A, A_rows, A_columns);
     
@@ -1578,7 +1578,7 @@ void multiply_sparse_double_matrices(int A_rows, int A_columns, int B_rows, int 
     free(A_csr_values);
 }
 
-void multiply_sparse_complex_float_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const MKL_Complex8 *alpha, const MKL_Complex8 *beta, const char isCompressed) {
+void multiply_sparse_complex_float_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const MKL_Complex8 *alpha, const MKL_Complex8 *beta) {
     MKL_Complex8 *A = NULL;
     create_complex_float_matrix(&A, A_rows, A_columns);
     
@@ -1595,7 +1595,7 @@ void multiply_sparse_complex_float_matrices(int A_rows, int A_columns, int B_row
     int *columns_arr = (int *) malloc(non_zeros_number * sizeof(int));
     int *pointerB = (int *) malloc((A_rows) * sizeof(int));
     int *pointerE = (int *) malloc((A_rows) * sizeof(int));
-    extract_csr_compression_float_complex_parameters(&A, A_rows, A_columns, &A_csr_values, &columns_arr, &pointerB, &pointerE);
+    extract_csr_compression_complex_float_parameters(&A, A_rows, A_columns, &A_csr_values, &columns_arr, &pointerB, &pointerE);
 
     if(SHOW == 's')
         show_complex_float_matrix(A, A_rows, A_columns, "A");
@@ -1626,7 +1626,7 @@ void multiply_sparse_complex_float_matrices(int A_rows, int A_columns, int B_row
     free(A_csr_values);
 }
 
-void multiply_sparse_complex_double_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const MKL_Complex16 *alpha, const MKL_Complex16 *beta, const char isCompressed) {
+void multiply_sparse_complex_double_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const MKL_Complex16 *alpha, const MKL_Complex16 *beta) {
     MKL_Complex16 *A = NULL;
     create_complex_double_matrix(&A, A_rows, A_columns);
     
@@ -1643,7 +1643,7 @@ void multiply_sparse_complex_double_matrices(int A_rows, int A_columns, int B_ro
     int *columns_arr = (int *) malloc(non_zeros_number * sizeof(int));
     int *pointerB = (int *) malloc((A_rows) * sizeof(int));
     int *pointerE = (int *) malloc((A_rows) * sizeof(int));
-    extract_csr_compression_double_complex_parameters(&A, A_rows, A_columns, &A_csr_values, &columns_arr, &pointerB, &pointerE);
+    extract_csr_compression_complex_double_parameters(&A, A_rows, A_columns, &A_csr_values, &columns_arr, &pointerB, &pointerE);
 
     if(SHOW == 's')
         show_complex_double_matrix(A, A_rows, A_columns, "A");
@@ -1697,6 +1697,82 @@ void auto_compressed_sparse_float_fill(float *values, int rows, int columns, int
     }
 }
 
+void auto_compressed_sparse_double_fill(double *values, int rows, int columns, int *columns_arr, int *pointerB, int *pointerE, int *non_zeros_number, int estimated_size_of_non_zeros_number, int RANDOM_SEED) {
+    *non_zeros_number = 0;
+    for(int i = 0; i < rows; i++){
+        pointerB[i] = *non_zeros_number;
+        for(int j = 0; j < columns; j++){
+            if(rand() > ZEROS_PERCENT * RAND_MAX){
+                if(*non_zeros_number >= estimated_size_of_non_zeros_number){
+                    estimated_size_of_non_zeros_number *= 2;
+                    values = (double *) realloc(values, estimated_size_of_non_zeros_number * sizeof(double));
+                    columns_arr = (int *) realloc(columns_arr, estimated_size_of_non_zeros_number * sizeof(int));
+
+                    if(values == NULL || columns_arr == NULL){
+                        printf("Allocation error: realloc\n");
+                        return;
+                    }
+                }
+                values[*non_zeros_number] = rand()%10;
+                columns_arr[(*non_zeros_number)++] = j;
+            }
+        }
+        pointerE[i] = *non_zeros_number;
+    }
+}
+
+void auto_compressed_sparse_complex_float_fill(MKL_Complex8 *values, int rows, int columns, int *columns_arr, int *pointerB, int *pointerE, int *non_zeros_number, int estimated_size_of_non_zeros_number, int RANDOM_SEED) {
+    *non_zeros_number = 0;
+    for(int i = 0; i < rows; i++){
+        pointerB[i] = *non_zeros_number;
+        for(int j = 0; j < columns; j++){
+            if(rand() > ZEROS_PERCENT * RAND_MAX){
+                if(*non_zeros_number >= estimated_size_of_non_zeros_number){
+                    estimated_size_of_non_zeros_number *= 2;
+                    values = (MKL_Complex8 *) realloc(values, estimated_size_of_non_zeros_number * sizeof(MKL_Complex8));
+                    columns_arr = (int *) realloc(columns_arr, estimated_size_of_non_zeros_number * sizeof(int));
+
+                    if(values == NULL || columns_arr == NULL){
+                        printf("Allocation error: realloc\n");
+                        return;
+                    }
+                }
+                values[*non_zeros_number].real = rand()%10;
+                values[*non_zeros_number].imag = rand()%10;
+
+                columns_arr[(*non_zeros_number)++] = j;
+            }
+        }
+        pointerE[i] = *non_zeros_number;
+    }
+}
+
+void auto_compressed_sparse_complex_double_fill(MKL_Complex16 *values, int rows, int columns, int *columns_arr, int *pointerB, int *pointerE, int *non_zeros_number, int estimated_size_of_non_zeros_number, int RANDOM_SEED) {
+    *non_zeros_number = 0;
+    for(int i = 0; i < rows; i++){
+        pointerB[i] = *non_zeros_number;
+        for(int j = 0; j < columns; j++){
+            if(rand() > ZEROS_PERCENT * RAND_MAX){
+                if(*non_zeros_number >= estimated_size_of_non_zeros_number){
+                    estimated_size_of_non_zeros_number *= 2;
+                    values = (MKL_Complex16 *) realloc(values, estimated_size_of_non_zeros_number * sizeof(MKL_Complex16));
+                    columns_arr = (int *) realloc(columns_arr, estimated_size_of_non_zeros_number * sizeof(int));
+
+                    if(values == NULL || columns_arr == NULL){
+                        printf("Allocation error: realloc\n");
+                        return;
+                    }
+                }
+                values[*non_zeros_number].real = rand()%10;
+                values[*non_zeros_number].imag = rand()%10;
+
+                columns_arr[(*non_zeros_number)++] = j;
+            }
+        }
+        pointerE[i] = *non_zeros_number;
+    }
+}
+
 void multiply_compressed_sparse_float_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const float alpha, const float beta){
     int estimated_size_of_non_zeros_number = A_rows*A_columns/2;
     float *A_csr_values = (float *) malloc(estimated_size_of_non_zeros_number * sizeof(float));
@@ -1725,17 +1801,140 @@ void multiply_compressed_sparse_float_matrices(int A_rows, int A_columns, int B_
 
     struct matrix_descr descr;
     descr.type = SPARSE_MATRIX_TYPE_GENERAL;
-
-    double start_time, end_time;
-    start_time = dsecnd();
     sparse_status_t info_mult = mkl_sparse_s_mm(SPARSE_OPERATION_NON_TRANSPOSE, alpha, A_csr, descr, SPARSE_LAYOUT_ROW_MAJOR, B, B_columns, B_columns, beta, C, B_columns);
-    end_time = dsecnd();
-
-    printf("%f s\n", end_time - start_time);
 
     if(SHOW == 's'){
         printf("mult info: %d\n", info_mult);
         show_float_matrix(C, A_rows, B_columns, "C");
+    }
+
+    free(C);
+    free(B);
+    free(pointerE);
+    free(pointerB);
+    free(columns_arr);
+    free(A_csr_values);
+}
+
+void multiply_compressed_sparse_double_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const double alpha, const double beta){
+    int estimated_size_of_non_zeros_number = A_rows*A_columns/2;
+    double *A_csr_values = (double *) malloc(estimated_size_of_non_zeros_number * sizeof(double));
+    int *columns_arr = (int *) malloc(estimated_size_of_non_zeros_number * sizeof(int));
+    int *pointerB = (int *) malloc((A_rows) * sizeof(int));
+    int *pointerE = (int *) malloc((A_rows) * sizeof(int));
+    
+    double *B = NULL;
+    create_double_matrix(&B, B_rows, B_columns);
+
+    double *C = NULL;
+    create_double_matrix(&C, A_rows, B_columns);
+    
+    int non_zeros_number;
+    auto_compressed_sparse_double_fill(A_csr_values, A_rows, A_columns, columns_arr, pointerB, pointerE, &non_zeros_number, estimated_size_of_non_zeros_number, RANDOM_SEED);
+
+    if(SHOW == 's')
+        show_double_matrix(A_csr_values, 1, non_zeros_number, "A compressed");
+
+    auto_double_fill(&B, B_rows, B_columns, RANDOM_SEED + 1);
+    if(SHOW == 's')
+        show_double_matrix(B, B_rows, B_columns, "B");
+
+    sparse_matrix_t A_csr;
+    sparse_status_t status_csr = mkl_sparse_d_create_csr(&A_csr, SPARSE_INDEX_BASE_ZERO, A_rows, A_columns, pointerB, pointerE, columns_arr, A_csr_values);
+
+    struct matrix_descr descr;
+    descr.type = SPARSE_MATRIX_TYPE_GENERAL;
+    sparse_status_t info_mult = mkl_sparse_d_mm(SPARSE_OPERATION_NON_TRANSPOSE, alpha, A_csr, descr, SPARSE_LAYOUT_ROW_MAJOR, B, B_columns, B_columns, beta, C, B_columns);
+
+    if(SHOW == 's'){
+        printf("mult info: %d\n", info_mult);
+        show_double_matrix(C, A_rows, B_columns, "C");
+    }
+
+    free(C);
+    free(B);
+    free(pointerE);
+    free(pointerB);
+    free(columns_arr);
+    free(A_csr_values);
+}
+
+void multiply_compressed_sparse_complex_float_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const MKL_Complex8 *alpha, const MKL_Complex8 *beta){
+    int estimated_size_of_non_zeros_number = A_rows*A_columns/2;
+    MKL_Complex8 *A_csr_values = (MKL_Complex8 *) malloc(estimated_size_of_non_zeros_number * sizeof(MKL_Complex8));
+    int *columns_arr = (int *) malloc(estimated_size_of_non_zeros_number * sizeof(int));
+    int *pointerB = (int *) malloc((A_rows) * sizeof(int));
+    int *pointerE = (int *) malloc((A_rows) * sizeof(int));
+    
+    MKL_Complex8 *B = NULL;
+    create_complex_float_matrix(&B, B_rows, B_columns);
+
+    MKL_Complex8 *C = NULL;
+    create_complex_float_matrix(&C, A_rows, B_columns);
+    
+    int non_zeros_number;
+    auto_compressed_sparse_complex_float_fill(A_csr_values, A_rows, A_columns, columns_arr, pointerB, pointerE, &non_zeros_number, estimated_size_of_non_zeros_number, RANDOM_SEED);
+
+    if(SHOW == 's')
+        show_complex_float_matrix(A_csr_values, 1, non_zeros_number, "A compressed");
+
+    auto_complex_float_fill(&B, B_rows, B_columns, RANDOM_SEED + 1);
+    if(SHOW == 's')
+        show_complex_float_matrix(B, B_rows, B_columns, "B");
+
+    sparse_matrix_t A_csr;
+    sparse_status_t status_csr = mkl_sparse_c_create_csr(&A_csr, SPARSE_INDEX_BASE_ZERO, A_rows, A_columns, pointerB, pointerE, columns_arr, A_csr_values);
+
+    struct matrix_descr descr;
+    descr.type = SPARSE_MATRIX_TYPE_GENERAL;
+    sparse_status_t info_mult = mkl_sparse_c_mm(SPARSE_OPERATION_NON_TRANSPOSE, *alpha, A_csr, descr, SPARSE_LAYOUT_ROW_MAJOR, B, B_columns, B_columns, *beta, C, B_columns);
+
+    if(SHOW == 's'){
+        printf("mult info: %d\n", info_mult);
+        show_complex_float_matrix(C, A_rows, B_columns, "C");
+    }
+
+    free(C);
+    free(B);
+    free(pointerE);
+    free(pointerB);
+    free(columns_arr);
+    free(A_csr_values);
+}
+
+void multiply_compressed_sparse_complex_double_matrices(int A_rows, int A_columns, int B_rows, int B_columns, const int RANDOM_SEED, const char SHOW, const MKL_Complex16 *alpha, const MKL_Complex16 *beta){
+    int estimated_size_of_non_zeros_number = A_rows*A_columns/2;
+    MKL_Complex16 *A_csr_values = (MKL_Complex16 *) malloc(estimated_size_of_non_zeros_number * sizeof(MKL_Complex16));
+    int *columns_arr = (int *) malloc(estimated_size_of_non_zeros_number * sizeof(int));
+    int *pointerB = (int *) malloc((A_rows) * sizeof(int));
+    int *pointerE = (int *) malloc((A_rows) * sizeof(int));
+    
+    MKL_Complex16 *B = NULL;
+    create_complex_double_matrix(&B, B_rows, B_columns);
+
+    MKL_Complex16 *C = NULL;
+    create_complex_double_matrix(&C, A_rows, B_columns);
+    
+    int non_zeros_number;
+    auto_compressed_sparse_complex_double_fill(A_csr_values, A_rows, A_columns, columns_arr, pointerB, pointerE, &non_zeros_number, estimated_size_of_non_zeros_number, RANDOM_SEED);
+
+    if(SHOW == 's')
+        show_complex_double_matrix(A_csr_values, 1, non_zeros_number, "A compressed");
+
+    auto_complex_double_fill(&B, B_rows, B_columns, RANDOM_SEED + 1);
+    if(SHOW == 's')
+        show_complex_double_matrix(B, B_rows, B_columns, "B");
+
+    sparse_matrix_t A_csr;
+    sparse_status_t status_csr = mkl_sparse_z_create_csr(&A_csr, SPARSE_INDEX_BASE_ZERO, A_rows, A_columns, pointerB, pointerE, columns_arr, A_csr_values);
+
+    struct matrix_descr descr;
+    descr.type = SPARSE_MATRIX_TYPE_GENERAL;
+    sparse_status_t info_mult = mkl_sparse_z_mm(SPARSE_OPERATION_NON_TRANSPOSE, *alpha, A_csr, descr, SPARSE_LAYOUT_ROW_MAJOR, B, B_columns, B_columns, *beta, C, B_columns);
+
+    if(SHOW == 's'){
+        printf("mult info: %d\n", info_mult);
+        show_complex_double_matrix(C, A_rows, B_columns, "C");
     }
 
     free(C);
