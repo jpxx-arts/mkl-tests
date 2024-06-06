@@ -30,7 +30,7 @@ matrix_type = 's'
 specific_test = 'n'
 
 # General matrices
-if matrix_type == 'g':
+if matrix_type == 'g' and specific_test != 't' and specific_test != 'T':
     run_experiments('g', specific_test, initial_size, final_size, interval, 'general')
 
 # Symmetric general matrices
