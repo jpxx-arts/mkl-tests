@@ -1618,7 +1618,6 @@ void multiply_sparse_complex_float_matrices(int A_rows, int A_columns, int B_row
         show_complex_float_matrix(C, A_rows, B_columns, "C");
     }
 
-    mkl_sparse_destroy(A_csr);
     free(C);
     free(B);
     free(A);
