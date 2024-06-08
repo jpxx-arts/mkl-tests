@@ -1381,11 +1381,7 @@ void multiply_sparse_float_general_matrices(int A_rows, int A_columns, int B_row
     if(SHOW == 's')
         show_float_matrix(B, B_rows, B_columns, "B");
 
-    double start_time, end_time; // here
-    start_time = dsecnd();
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, A_rows, B_columns, A_columns, alpha, A, A_columns, B, B_rows, beta, C, B_columns);
-    end_time = dsecnd();
-    printf("%f s\n", end_time - start_time);
     
     if(SHOW == 's')
         show_float_matrix(C, A_rows, B_columns, "C");

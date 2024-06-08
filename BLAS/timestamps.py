@@ -24,9 +24,9 @@ def run_experiments(matrix_type, initial_size, final_size, interval, filename_pr
                 file.write(exp)
 
 initial_size = 300
-final_size = 600
+final_size = 400
 interval = 100
-matrix_type = 's'
+matrix_type = 'ge'
 
 # General matrices
 if matrix_type == 'g':
