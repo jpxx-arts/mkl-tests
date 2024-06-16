@@ -31,7 +31,7 @@ int check_args_LAPACK(const char *BIN, int rows, int columns, const char TYPE, c
 
 //Índice K para matriz simétrica
 int k_index(int i, int j, int n) {
-    return (j - 1) + (i - 1) * (2 * n - i) / 2;
+    return j + i*(2*n - i)/2;
 }
 
 // float
@@ -209,8 +209,8 @@ int show_float_packed_matrix(float *matrix, char uplo, int rows, int columns, ch
         
         // Ajustando para matrizes simétricas
         default:
-            for(int i = 1; i <= rows; i++){
-                for(int j = 1; j <= columns; j++){
+            for(int i = 0; i < rows; i++){
+                for(int j = 0; j < columns; j++){
                     if(i <= j){
                         printf("%.2f ", matrix[k_index(i, j, rows)]);
                     }else{
@@ -435,8 +435,8 @@ int show_double_packed_matrix(double *matrix, char uplo, int rows, int columns, 
         
         // Ajustando para matrizes simétricas
         default:
-            for(int i = 1; i <= rows; i++){
-                for(int j = 1; j <= columns; j++){
+            for(int i = 0; i < rows; i++){
+                for(int j = 0; j < columns; j++){
                     if(i <= j){
                         printf("%.2f ", matrix[k_index(i, j, rows)]);
                     }else{
@@ -669,8 +669,8 @@ int show_complex_float_packed_matrix(lapack_complex_float *matrix, char uplo, in
         
         // Ajustando para matrizes simétricas
         default:
-            for(int i = 1; i <= rows; i++){
-                for(int j = 1; j <= columns; j++){
+            for(int i = 0; i < rows; i++){
+                for(int j = 0; j < columns; j++){
                     if(i <= j){
                         printf("(%.2f, %.2f) ", matrix[k_index(i, j, rows)].real, matrix[k_index(i, j, rows)].imag);
                     }else{
@@ -907,8 +907,8 @@ int show_complex_double_packed_matrix(lapack_complex_double *matrix, char uplo, 
         
         // Ajustando para matrizes simétricas
         default:
-            for(int i = 1; i <= rows; i++){
-                for(int j = 1; j <= columns; j++){
+            for(int i = 0; i < rows; i++){
+                for(int j = 0; j < columns; j++){
                     if(i <= j){
                         printf("(%.2f, %.2f) ", matrix[k_index(i, j, rows)].real, matrix[k_index(i, j, rows)].imag);
                     }else{
