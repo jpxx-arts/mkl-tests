@@ -1171,7 +1171,7 @@ void multiply_complex_float_symmetric_matrices(int A_rows, int A_columns, int B_
     if(SHOW == 's')
         show_complex_float_matrix(B, B_rows, B_columns, "B");
 
-    cblas_csymm(CblasRowMajor, CblasLeft, CblasUpper, A_rows, B_columns, &alpha, A, A_rows, B, B_columns, &beta, C, B_columns);
+    cblas_csymm(CblasRowMajor, CblasLeft, CblasUpper, A_rows, B_columns, alpha, A, A_rows, B, B_columns, beta, C, B_columns);
     if(SHOW == 's')
         show_complex_float_matrix(C, A_rows, B_columns, "C");
 
@@ -1198,7 +1198,7 @@ void multiply_complex_double_symmetric_matrices(int A_rows, int A_columns, int B
     if(SHOW == 's')
         show_complex_double_matrix(B, B_rows, B_columns, "B");
 
-    cblas_zsymm(CblasRowMajor, CblasLeft, CblasUpper, A_rows, B_columns, &alpha, A, A_rows, B, B_columns, &beta, C, B_columns);
+    cblas_zsymm(CblasRowMajor, CblasLeft, CblasUpper, A_rows, B_columns, alpha, A, A_rows, B, B_columns, beta, C, B_columns);
     if(SHOW == 's')
         show_complex_double_matrix(C, A_rows, B_columns, "C");
 
