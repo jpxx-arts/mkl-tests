@@ -235,6 +235,7 @@ int main(int argc, const char *argv[]){
                 }
             }
 
+            // General triangular matrix
             else if(!strcmp(MATRIX_TYPE, "gt")){
 
                 // Criação de uma matriz A
@@ -693,6 +694,7 @@ int main(int argc, const char *argv[]){
                 }
             }
 
+            // General triangular matrix
             else if(!strcmp(MATRIX_TYPE, "gt")){
 
                 // Criação de uma matriz A
@@ -1116,6 +1118,7 @@ int main(int argc, const char *argv[]){
                 }
             }
 
+            // General triangular matrix
             else if(!strcmp(MATRIX_TYPE, "gt")){
 
                 // Criação de uma matriz A
@@ -1518,7 +1521,8 @@ int main(int argc, const char *argv[]){
                 }
             }
 
-            else if(!strcmp(MATRIX_TYPE, "g")){
+            // General triangular matrix
+            else if(!strcmp(MATRIX_TYPE, "gt")){
 
                 // Criação de uma matriz A
                 lapack_complex_double *A = NULL;
