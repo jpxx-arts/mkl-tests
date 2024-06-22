@@ -3,6 +3,8 @@
 
 #include <mkl.h>
 
+#define DEFINED_MULTIPLICATION_ARGS A_rows, A_columns, B_rows, B_columns, RANDOM_SEED, SHOW
+
 int check_args_BLAS(const char *BIN, int A_rows, int A_columns, int B_rows, int B_columns, const char *ROUTINE, const char TYPE, const char *MATRIX_TYPE);
 
 // LAPACK

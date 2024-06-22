@@ -4,8 +4,6 @@
 #include <mkl.h>
 #include "../include/alg_lin.h"
 
-#define DEFINED_MULTIPLICATION_ARGS A_rows, A_columns, B_rows, B_columns, RANDOM_SEED, SHOW
-
 int main(int argc, char const *argv[]){
     double start_time, end_time;
     start_time = dsecnd();
