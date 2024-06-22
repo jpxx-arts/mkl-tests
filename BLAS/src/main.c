@@ -147,6 +147,42 @@ int main(int argc, char const *argv[]){
             }
         }
 
+        else if(!strcmp(MATRIX_TYPE, "t")){
+            switch(TYPE){
+                case 's': {
+                    const float alpha = 1.0;
+                    const float beta = 0.0;
+
+                    multiply_float_triangular_matrices(DEFINED_MULTIPLICATION_ARGS, alpha, beta);
+                    break;
+                }
+
+                case 'd': {
+                    const double alpha = 1.0;
+                    const double beta = 0.0;
+
+                    multiply_double_triangular_matrices(DEFINED_MULTIPLICATION_ARGS, alpha, beta);
+                    break;
+                }
+
+                case 'c': {
+                    MKL_Complex8 alpha = {1.0, 1.0};
+                    MKL_Complex8 beta = {0.0, 0.0};
+
+                    multiply_complex_float_triangular_matrices(DEFINED_MULTIPLICATION_ARGS, &alpha, &beta);
+                    break;
+                }
+
+                case 'z': {
+                    MKL_Complex16 alpha = {1.0, 1.0};
+                    MKL_Complex16 beta = {0.0, 0.0};
+
+                    multiply_complex_double_triangular_matrices(DEFINED_MULTIPLICATION_ARGS, &alpha, &beta);
+                    break;
+                }
+            }
+        }
+
         else if(!strcmp(MATRIX_TYPE, "ed")){
             switch(TYPE){
                 case 's': {
